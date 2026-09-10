@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Meanings | Quiklee</title>
+<meta name="description" content="Browse every meanings on Quiklee, grouped by category.">
+<link rel="canonical" href="https://quiklee.vercel.app/meanings">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; Meanings</div>
+
+<main class="tool-page">
+  <div class="prose">
+    <h1>All Meanings</h1>
+    <p class="muted">Every meaning on Quiklee, grouped by category. Slang, acronyms, and tech terms, explained plainly.</p>
+  </div>
+  <div id="hub-list">
+<div class="cluster-group"><h3>Meanings</h3><div class="tool-link-list"><a href="/lol-meaning-texting-vs-slack">LOL Meaning — Texting vs. Slack/Work Chat<span class="desc">What LOL means in casual texting versus professional chat like Slack, where its tone shifts.</span></a><a href="/iykyk-meaning">IYKYK Meaning<span class="desc">What IYKYK stands for and how it&#39;s used, with real usage examples.</span></a></div></div><div class="cluster-group"><h3>Meanings</h3><div class="tool-link-list"><a href="/gpt-meaning">GPT Meaning<span class="desc">What GPT stands for in AI, and what it actually refers to technically.</span></a><a href="/nft-meaning-for-beginners">NFT Meaning for Beginners<span class="desc">A jargon-free explanation of what NFT stands for and what it actually is.</span></a></div></div><div class="cluster-group"><h3>Meanings</h3><div class="tool-link-list"><a href="/fyi-meaning">FYI Meaning<span class="desc">What FYI stands for and how it&#39;s typically used in messages and email.</span></a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

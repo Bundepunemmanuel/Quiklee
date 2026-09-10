@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Calculate BMI Manually | Quiklee</title>
+<meta name="description" content="Step-by-step guide to calculating BMI by hand, with the formula and a worked example.">
+<link rel="canonical" href="https://quiklee.vercel.app/how-to-calculate-bmi-manually">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/calculators">Calculators</a> &rsaquo; How to Calculate BMI Manually</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>How to Calculate BMI Manually</h1><p class="muted" style="max-width:560px;">The full formula, in both metric and imperial, with a worked example for each — useful if you&#39;re doing this on paper, checking homework, or just curious what the calculator above is actually doing.</p><div class="tool-card"><h2>Metric formula</h2><p>BMI = weight in kilograms ÷ (height in metres × height in metres)</p><ol class='steps'><li>Convert height from centimetres to metres by dividing by 100. Example: 175cm ÷ 100 = 1.75m.</li><li>Square the height in metres. Example: 1.75 × 1.75 = 3.0625.</li><li>Divide weight in kilograms by that number. Example: 70kg ÷ 3.0625 = 22.86.</li><li>That result, 22.86, is the BMI.</li></ol><h2>Imperial formula</h2><p>BMI = (weight in pounds ÷ (height in inches × height in inches)) × 703</p><ol class='steps'><li>Convert height fully to inches. Example: 5&#39;9&quot; = 69 inches.</li><li>Square the height in inches. Example: 69 × 69 = 4,761.</li><li>Divide weight in pounds by that number, then multiply by 703. Example: (154 ÷ 4,761) × 703 ≈ 22.74.</li><li>That result is the BMI — the 703 constant exists purely to make the imperial formula land on the same scale as the metric one.</li></ol><p>The 703 multiplier trips people up most often — it&#39;s not arbitrary, it&#39;s the unit conversion factor (1kg/m² = 703 lb/in²) baked into the formula so you don&#39;t have to convert to metric first.</p></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/bmi-calculator">BMI Calculator</a><a href="/bmi-calculator-kg-cm">BMI Calculator (kg and cm)</a><a href="/healthy-bmi-range-by-age">Healthy BMI Range by Age</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

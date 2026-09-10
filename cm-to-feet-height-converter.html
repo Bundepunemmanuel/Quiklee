@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cm to Feet — Height Converter | Quiklee</title>
+<meta name="description" content="Convert height from centimetres to feet and inches, formatted the way height is usually written.">
+<link rel="canonical" href="https://quiklee.vercel.app/cm-to-feet-height-converter">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/converters">Converters</a> &rsaquo; cm to Feet — Height Converter</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>cm to Feet — Height Converter</h1><p class="muted" style="max-width:560px;">Built specifically for converting a person&#39;s height — enter centimetres, get feet and inches formatted the normal way (like 5&#39;9&quot;), not a decimal.</p><div class="tool-card"><form id="tool-form" data-formula="height-cm-feet"><div class="field"><label for="f-cm">Height (cm)</label><input type="number" step="any" id="f-cm" placeholder="175"></div><button type="submit" class="btn-calc">Calculate</button><div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div></form></div><div class="explainer"><h2>How this works</h2><p>A generic length converter would give you 175cm = 5.74 feet — technically correct, but nobody says their height that way. This tool converts to feet and inches and formats it as 5&#39;9&quot;, rounding to the nearest whole inch.</p><p>This comes up constantly for filling out forms, profiles, or just converting a doctor&#39;s measurement to something you can picture.</p></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/length-converter">Length Converter</a><a href="/kg-to-lbs-converter">kg to lbs Converter</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

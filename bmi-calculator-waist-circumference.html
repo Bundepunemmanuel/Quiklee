@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Calculator with Waist Circumference | Quiklee</title>
+<meta name="description" content="Calculates BMI alongside waist-to-height ratio, a stronger indicator of health risk than BMI alone.">
+<link rel="canonical" href="https://quiklee.vercel.app/bmi-calculator-waist-circumference">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/calculators">Calculators</a> &rsaquo; BMI Calculator with Waist Circumference</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>BMI Calculator with Waist Circumference</h1><p class="muted" style="max-width:560px;">BMI alone can&#39;t tell where your weight is carried. Adding waist circumference gives you a waist-to-height ratio too — a measurement several studies rate as a better predictor of cardiovascular risk than BMI by itself.</p><div class="tool-card"><form id="tool-form" data-formula="bmi-waist"><div class="field"><label for="f-weight">Weight (kg)</label><input type="number" step="any" id="f-weight" placeholder="78"></div><div class="field"><label for="f-height">Height (cm)</label><input type="number" step="any" id="f-height" placeholder="172"></div><div class="field"><label for="f-waist">Waist circumference (cm)</label><input type="number" step="any" id="f-waist" placeholder="88"></div><button type="submit" class="btn-calc">Calculate</button><div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div></form></div><div class="explainer"><h2>How this works</h2><p>Waist-to-height ratio is calculated as waist ÷ height. A ratio under 0.5 is generally considered a healthy range for most adults, regardless of overall BMI category — this is why two people with the same BMI can have very different health risk profiles.</p><p>Measure your waist at the narrowest point, usually just above the belly button, without pulling the tape measure tight.</p><div class="caveat">Waist-to-height ratio is a screening guide, not a diagnosis — it doesn&#39;t account for pregnancy, certain medical conditions, or body shapes where fat is carried elsewhere.</div></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/bmi-calculator-for-athletes">BMI Calculator for Athletes</a><a href="/bmi-calculator-for-bodybuilders">BMI Calculator for Bodybuilders</a><a href="/bmi-calculator">BMI Calculator</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

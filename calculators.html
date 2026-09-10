@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Calculators | Quiklee</title>
+<meta name="description" content="Browse every calculators on Quiklee, grouped by category.">
+<link rel="canonical" href="https://quiklee.vercel.app/calculators">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; Calculators</div>
+
+<main class="tool-page">
+  <div class="prose">
+    <h1>All Calculators</h1>
+    <p class="muted">Every calculator on Quiklee, grouped by cluster. Each one is a real, separate page built for a specific search.</p>
+  </div>
+  <div id="hub-list">
+<div class="cluster-group"><h3>BMI Calculators</h3><div class="tool-link-list"><a href="/bmi-calculator">BMI Calculator<span class="desc">Calculate your Body Mass Index instantly using metric or imperial units, with an explanation of what your result means.</span></a><a href="/bmi-calculator-kg-cm">BMI Calculator (kg and cm)<span class="desc">A streamlined BMI calculator that only uses kilograms and centimetres — no unit switching needed.</span></a><a href="/bmi-calculator-for-bodybuilders">BMI Calculator for Bodybuilders<span class="desc">BMI calculator for bodybuilders and heavily muscled lifters, with an explanation of why standard BMI overstates fatness for high muscle mass.</span></a><a href="/bmi-calculator-for-athletes">BMI Calculator for Athletes<span class="desc">BMI calculator built for athletes, with context on why muscle mass and training type skew standard BMI results.</span></a><a href="/bmi-calculator-waist-circumference">BMI Calculator with Waist Circumference<span class="desc">Calculates BMI alongside waist-to-height ratio, a stronger indicator of health risk than BMI alone.</span></a><a href="/bmi-calculator-women-over-40">BMI Calculator for Women Over 40<span class="desc">BMI calculator for women over 40, with context on how hormonal changes and muscle loss affect the standard BMI scale.</span></a><a href="/bmi-calculator-men-over-50">BMI Calculator for Men Over 50<span class="desc">BMI calculator for men over 50, with context on age-related muscle loss and how it affects standard BMI interpretation.</span></a><a href="/bmi-calculator-stones-pounds">BMI Calculator in Stones and Pounds<span class="desc">UK-style BMI calculator using stones and pounds for weight, with height in feet and inches.</span></a><a href="/how-to-calculate-bmi-manually">How to Calculate BMI Manually<span class="desc">Step-by-step guide to calculating BMI by hand, with the formula and a worked example.</span></a><a href="/healthy-bmi-range-by-age">Healthy BMI Range by Age<span class="desc">Reference table of standard BMI categories, plus how interpretation shifts across age groups.</span></a></div></div><div class="cluster-group"><h3>Tip Calculators</h3><div class="tool-link-list"><a href="/tip-calculator">Tip Calculator<span class="desc">Calculate the tip and total bill instantly, split evenly across any number of people.</span></a><a href="/tip-calculator-split-bill">Tip Calculator — Split the Bill<span class="desc">Split a restaurant bill and tip evenly across a group, with an option to round each person&#39;s share up.</span></a><a href="/tip-calculator-no-tax">Tip Calculator — Tip Before Tax<span class="desc">Calculates tip based on the pre-tax subtotal instead of the total including sales tax.</span></a></div></div><div class="cluster-group"><h3>Percentage Calculators</h3><div class="tool-link-list"><a href="/percentage-calculator">Percentage Calculator<span class="desc">Find what percentage one number is of another, or find a percentage of a number, instantly.</span></a><a href="/discount-percentage-calculator">Discount Percentage Calculator<span class="desc">Calculate the sale price and amount saved from an original price and a discount percentage.</span></a><a href="/salary-increase-percentage-calculator">Salary Increase Percentage Calculator<span class="desc">Calculate the percentage increase between an old salary and a new salary, or a raise amount.</span></a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

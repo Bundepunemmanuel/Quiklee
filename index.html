@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiklee — Calculators, Converters & Meanings, Instantly</title>
+<meta name="description" content="Free calculators, unit converters, and slang/acronym meanings. Type what you need, get the answer immediately — no sign-up.">
+<link rel="canonical" href="https://quiklee.vercel.app/">
+<link rel="preload" as="style" href="/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Quick answers to what you searched for</h1>
+  <p class="lede">Calculators, converters, and meanings that work the moment you land on the page.</p>
+  <div class="search-box">
+    <input type="text" id="site-search" placeholder="Try “BMI calculator” or “IYKYK meaning”…" autocomplete="off">
+    <div class="search-results" id="site-search-results"></div>
+  </div>
+</section>
+
+<div class="cat-grid">
+  <a href="/calculators" class="cat-card">
+    <span class="emoji">🔢</span>
+    <h3>Calculators</h3>
+    <p>BMI, tips, and everyday math — answered instantly.</p>
+  </a>
+  <a href="/converters" class="cat-card">
+    <span class="emoji">🔄</span>
+    <h3>Converters</h3>
+    <p>Length, weight, pace, and time — any unit to any unit.</p>
+  </a>
+  <a href="/meanings" class="cat-card">
+    <span class="emoji">📖</span>
+    <h3>Meanings</h3>
+    <p>Slang, acronyms, and internet terms, explained plainly.</p>
+  </a>
+</div>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tip Calculator — Tip Before Tax | Quiklee</title>
+<meta name="description" content="Calculates tip based on the pre-tax subtotal instead of the total including sales tax.">
+<link rel="canonical" href="https://quiklee.vercel.app/tip-calculator-no-tax">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/calculators">Calculators</a> &rsaquo; Tip Calculator — Tip Before Tax</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>Tip Calculator — Tip Before Tax</h1><p class="muted" style="max-width:560px;">Etiquette guides generally recommend tipping on the subtotal before sales tax, not the tax-inclusive total. This version asks for both figures and calculates the tip on the pre-tax amount only.</p><div class="tool-card"><form id="tool-form" data-formula="tip-pretax"><div class="field"><label for="f-totalBill">Total on receipt (incl. tax)</label><input type="number" step="any" id="f-totalBill" placeholder="92.40"></div><div class="field"><label for="f-taxAmount">Sales tax amount</label><input type="number" step="any" id="f-taxAmount" placeholder="7.40"></div><div class="field"><label for="f-tipPercent">Tip percentage</label><input type="number" step="any" id="f-tipPercent" placeholder="20"></div><button type="submit" class="btn-calc">Calculate</button><div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div></form></div><div class="explainer"><h2>How this works</h2><p>The receipt&#39;s tax line is usually printed separately from the subtotal — enter that tax figure here and the tool subtracts it before applying your tip percentage.</p><p>The difference is usually small (a percent or two of the tip amount) but it&#39;s the technically correct way to calculate a tip, since the server didn&#39;t provide the tax.</p></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/tip-calculator">Tip Calculator</a><a href="/tip-calculator-split-bill">Tip Calculator — Split the Bill</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

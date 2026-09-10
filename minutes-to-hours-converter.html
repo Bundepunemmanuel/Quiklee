@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minutes to Hours Converter | Quiklee</title>
+<meta name="description" content="Convert minutes to hours, shown both as decimal hours and as hours-and-minutes.">
+<link rel="canonical" href="https://quiklee.vercel.app/minutes-to-hours-converter">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/converters">Converters</a> &rsaquo; Minutes to Hours Converter</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>Minutes to Hours Converter</h1><p class="muted" style="max-width:560px;">Enter a number of minutes to get both the decimal hours (for timesheets and spreadsheets) and the hours-and-minutes format (for reading).</p><div class="tool-card"><form id="tool-form" data-formula="time-min-hours"><div class="field"><label for="f-minutes">Minutes</label><input type="number" step="any" id="f-minutes" placeholder="150"></div><button type="submit" class="btn-calc">Calculate</button><div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div></form></div><div class="explainer"><h2>How this works</h2><p>150 minutes is both &#39;2.5 hours&#39; (decimal — what payroll and spreadsheets want) and &#39;2 hours 30 minutes&#39; (what a person actually says out loud). This tool gives you both at once so you don&#39;t have to pick which format you need in advance.</p></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/length-converter">Length Converter</a><a href="/kg-to-lbs-converter">kg to lbs Converter</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

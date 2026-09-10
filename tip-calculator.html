@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tip Calculator | Quiklee</title>
+<meta name="description" content="Calculate the tip and total bill instantly, split evenly across any number of people.">
+<link rel="canonical" href="https://quiklee.vercel.app/tip-calculator">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/calculators">Calculators</a> &rsaquo; Tip Calculator</div>
+
+<main class="tool-page">
+  <div id="tool-root" class="prose">
+<h1>Tip Calculator</h1><p class="muted" style="max-width:560px;">Enter the bill, pick a tip percentage, and split across the table if you&#39;re not paying alone.</p><div class="tool-card"><form id="tool-form" data-formula="tip-standard"><div class="field"><label for="f-bill">Bill amount</label><input type="number" step="any" id="f-bill" placeholder="84.50"></div><div class="field"><label for="f-tipPercent">Tip percentage</label><input type="number" step="any" id="f-tipPercent" placeholder="18"></div><div class="field"><label for="f-people">Number of people</label><input type="number" step="any" id="f-people" placeholder="1"></div><button type="submit" class="btn-calc">Calculate</button><div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div></form></div><div class="explainer"><h2>How this works</h2><p>Tip is calculated as bill × (tip percent ÷ 100). If you&#39;re splitting the table, the total (bill + tip) is then divided evenly by the number of people.</p><p>18–20% is the typical range for good sit-down service in the US; 10-15% is more standard in the UK and much of Europe, where service is often already included.</p></div><div class="related"><h2>Related tools</h2><div class="related-list"><a href="/tip-calculator-split-bill">Tip Calculator — Split the Bill</a><a href="/tip-calculator-no-tax">Tip Calculator — Tip Before Tax</a><a href="/discount-percentage-calculator">Discount Percentage Calculator</a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachCalcForm();
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>

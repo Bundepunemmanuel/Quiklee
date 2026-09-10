@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Converters | Quiklee</title>
+<meta name="description" content="Browse every converters on Quiklee, grouped by category.">
+<link rel="canonical" href="https://quiklee.vercel.app/converters">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">Quik<span>lee</span></a>
+    <nav class="main-nav">
+      <a href="/calculators">Calculators</a>
+      <a href="/converters">Converters</a>
+      <a href="/meanings">Meanings</a>
+    </nav>
+    <div class="header-search">
+      <input type="text" id="site-search" placeholder="Search tools…" autocomplete="off">
+      <div class="search-results" id="site-search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><a href="/">Home</a> &rsaquo; Converters</div>
+
+<main class="tool-page">
+  <div class="prose">
+    <h1>All Converters</h1>
+    <p class="muted">Every converter on Quiklee, grouped by cluster. Each one is a real, separate page built for a specific search.</p>
+  </div>
+  <div id="hub-list">
+<div class="cluster-group"><h3>Length Converters</h3><div class="tool-link-list"><a href="/length-converter">Length Converter<span class="desc">Convert between millimetres, centimetres, metres, kilometres, inches, feet, yards, and miles instantly.</span></a><a href="/cm-to-feet-height-converter">cm to Feet — Height Converter<span class="desc">Convert height from centimetres to feet and inches, formatted the way height is usually written.</span></a><a href="/km-to-miles-running-pace-converter">Running Pace Converter — km to Miles<span class="desc">Convert running pace between minutes-per-kilometre and minutes-per-mile.</span></a></div></div><div class="cluster-group"><h3>Weight Converters</h3><div class="tool-link-list"><a href="/kg-to-lbs-converter">kg to lbs Converter<span class="desc">Convert weight between kilograms and pounds instantly, in either direction.</span></a></div></div><div class="cluster-group"><h3>Time Converters</h3><div class="tool-link-list"><a href="/minutes-to-hours-converter">Minutes to Hours Converter<span class="desc">Convert minutes to hours, shown both as decimal hours and as hours-and-minutes.</span></a></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div>Quiklee — quick calculators, converters, and meanings.</div>
+  <div class="foot-links"><a href="/calculators">Calculators</a><a href="/converters">Converters</a><a href="/meanings">Meanings</a></div>
+</footer>
+
+<script src="/calculators-data.js"></script>
+<script src="/converters-data.js"></script>
+<script src="/meanings-data.js"></script>
+<script src="/main.js"></script>
+<script>
+  Quiklee.attachSearch(document.getElementById("site-search"), document.getElementById("site-search-results"));
+</script>
+</body>
+</html>
