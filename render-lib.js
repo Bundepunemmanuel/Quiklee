@@ -3,6 +3,10 @@
    No DOM dependency — safe to run in Node at build time.
 */
 
+function urlFor(sectionPath, slug) {
+  return sectionPath ? "/" + sectionPath + "/" + slug : "/" + slug;
+}
+
 function esc(str) {
   return String(str).replace(/[&<>"']/g, function (c) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -16,10 +20,22 @@ function findEntry(dataArray, slug) {
   return null;
 }
 
+/* Turns explainer paragraphs into HTML, auto-linking any [[slug|label]] markers
+   the data file uses for natural, in-body contextual links (not a forced link dump). */
+function linkifyExplainer(text, sectionPath) {
+  return esc(text).replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, function (_, slug, label) {
+    return '<a href="' + urlFor(sectionPath, slug) + '">' + esc(label) + "</a>";
+  });
+}
+
 /* Builds the inner <div id="tool-root"> content for one tool page */
-function buildToolContentHTML(entry, allData) {
+function buildToolContentHTML(entry, allData, sectionPath) {
   var html = "";
   html += "<h1>" + esc(entry.h1) + "</h1>";
+
+  if (entry.hook) {
+    html += '<p class="hook-line">' + esc(entry.hook) + "</p>";
+  }
   html += '<p class="muted" style="max-width:560px;">' + esc(entry.intro) + "</p>";
 
   if (entry.type === "form") {
@@ -58,18 +74,22 @@ function buildToolContentHTML(entry, allData) {
 
   if (entry.type === "form" && entry.explainer && entry.explainer.length) {
     html += '<div class="explainer"><h2>How this works</h2>';
-    entry.explainer.forEach(function (p) { html += "<p>" + esc(p) + "</p>"; });
+    entry.explainer.forEach(function (p) { html += "<p>" + linkifyExplainer(p, sectionPath) + "</p>"; });
     if (entry.caveat) html += '<div class="caveat">' + esc(entry.caveat) + "</div>";
     html += "</div>";
   } else if (entry.caveat) {
     html += '<div class="explainer"><div class="caveat">' + esc(entry.caveat) + "</div></div>";
   }
 
+  if (entry.faq && entry.faq.length) {
+    html += buildFaqHTML(entry.faq);
+  }
+
   if (entry.related && entry.related.length) {
     html += '<div class="related"><h2>Related tools</h2><div class="related-list">';
     entry.related.forEach(function (slug) {
       var rel = findEntry(allData, slug);
-      if (rel) html += '<a href="/' + rel.slug + '">' + esc(rel.title) + "</a>";
+      if (rel) html += '<a href="' + urlFor(sectionPath, rel.slug) + '">' + esc(rel.title) + "</a>";
     });
     html += "</div></div>";
   }
@@ -77,8 +97,36 @@ function buildToolContentHTML(entry, allData) {
   return html;
 }
 
+/* Renders a real, visible FAQ section — this is what carries long-tail keyword
+   phrasing into actual page body content, in plain language, matched to intent. */
+function buildFaqHTML(faqList) {
+  var html = '<div class="faq-section"><h2>Frequently asked questions</h2>';
+  faqList.forEach(function (item) {
+    html += '<div class="faq-item"><h3>' + esc(item.q) + "</h3><p>" + esc(item.a) + "</p></div>";
+  });
+  html += "</div>";
+  return html;
+}
+
+/* Generates matching FAQPage JSON-LD so Google can show FAQ rich results. */
+function buildFaqSchema(faqList) {
+  if (!faqList || !faqList.length) return "";
+  var schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqList.map(function (item) {
+      return {
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a }
+      };
+    })
+  };
+  return JSON.stringify(schema);
+}
+
 /* Builds the inner #hub-list content for a category hub page */
-function buildHubListHTML(dataArray) {
+function buildHubListHTML(dataArray, sectionPath) {
   var groups = {};
   var order = [];
   dataArray.forEach(function (e) {
@@ -90,11 +138,18 @@ function buildHubListHTML(dataArray) {
     var g = groups[key];
     html += '<div class="cluster-group"><h3>' + esc(g.label) + '</h3><div class="tool-link-list">';
     g.items.forEach(function (item) {
-      html += '<a href="/' + item.slug + '">' + esc(item.title) + '<span class="desc">' + esc(item.metaDescription) + "</span></a>";
+      html += '<a href="' + urlFor(sectionPath, item.slug) + '">' + esc(item.title) + '<span class="desc">' + esc(item.metaDescription) + "</span></a>";
     });
     html += "</div></div>";
   });
   return html;
 }
 
-module.exports = { esc: esc, findEntry: findEntry, buildToolContentHTML: buildToolContentHTML, buildHubListHTML: buildHubListHTML };
+module.exports = {
+  esc: esc,
+  findEntry: findEntry,
+  buildToolContentHTML: buildToolContentHTML,
+  buildHubListHTML: buildHubListHTML,
+  buildFaqHTML: buildFaqHTML,
+  buildFaqSchema: buildFaqSchema
+};

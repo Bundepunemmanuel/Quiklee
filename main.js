@@ -162,6 +162,64 @@
         return { main: (pctInc >= 0 ? "+" : "") + pctInc.toFixed(1) + "%", sub: (diff >= 0 ? "+$" : "-$") + Math.abs(diff).toLocaleString() + " raise, from $" + v.oldSalary.toLocaleString() + " to $" + v.newSalary.toLocaleString() };
       }
 
+      case "ideal-weight": {
+        // Devine formula, height entered in cm, converted to inches internally
+        var totalInches = v.height / 2.54;
+        var overSixty = Math.max(0, totalInches - 60);
+        var idealKg = v.gender === "male"
+          ? 50 + 2.3 * overSixty
+          : 45.5 + 2.3 * overSixty;
+        var idealLbs = idealKg * 2.20462;
+        return { main: idealKg.toFixed(1) + " kg (" + idealLbs.toFixed(1) + " lb)", sub: "Devine formula estimate for " + v.height + "cm — a range, not a target to hit exactly" };
+      }
+
+      case "body-fat-navy": {
+        // US Navy method (imperial inches, log10-based)
+        var bf;
+        if (v.gender === "male") {
+          bf = 495 / (1.0324 - 0.19077 * Math.log10(v.waist - v.neck) + 0.15456 * Math.log10(v.height)) - 450;
+        } else {
+          bf = 495 / (1.29579 - 0.35004 * Math.log10(v.waist + v.hip - v.neck) + 0.22100 * Math.log10(v.height)) - 450;
+        }
+        if (!isFinite(bf) || bf < 0) return { main: "Check your measurements", sub: "Waist must be larger than neck for this formula to work." };
+        return { main: bf.toFixed(1) + "% body fat", sub: "US Navy method estimate — accurate to roughly ±3-4% versus a DEXA scan" };
+      }
+
+      case "lean-body-mass": {
+        // Boer formula, metric
+        var lbm = v.gender === "male"
+          ? 0.407 * v.weight + 0.267 * v.height - 19.2
+          : 0.252 * v.weight + 0.473 * v.height - 48.3;
+        var fatMass = v.weight - lbm;
+        return { main: lbm.toFixed(1) + " kg lean mass", sub: "≈ " + fatMass.toFixed(1) + " kg fat mass, at a total weight of " + v.weight + " kg" };
+      }
+
+      case "percentage-increase": {
+        var incAmt = v.newValue - v.oldValue;
+        var incPct = (incAmt / v.oldValue) * 100;
+        return { main: "+" + incPct.toFixed(2) + "%", sub: v.oldValue + " → " + v.newValue + " is an increase of " + incAmt.toFixed(2) };
+      }
+
+      case "percentage-decrease": {
+        var decAmt = v.oldValue - v.newValue;
+        var decPct = (decAmt / v.oldValue) * 100;
+        return { main: "-" + decPct.toFixed(2) + "%", sub: v.oldValue + " → " + v.newValue + " is a decrease of " + decAmt.toFixed(2) };
+      }
+
+      case "percentage-change": {
+        var chgAmt = v.newValue - v.oldValue;
+        var chgPct = (chgAmt / v.oldValue) * 100;
+        var direction = chgPct >= 0 ? "increase" : "decrease";
+        return { main: (chgPct >= 0 ? "+" : "") + chgPct.toFixed(2) + "%", sub: v.oldValue + " → " + v.newValue + " is a " + Math.abs(chgPct).toFixed(2) + "% " + direction };
+      }
+
+      case "percentage-difference": {
+        var diffAmt = Math.abs(v.valueA - v.valueB);
+        var avg = (v.valueA + v.valueB) / 2;
+        var diffPct = (diffAmt / avg) * 100;
+        return { main: diffPct.toFixed(2) + "%", sub: "Symmetric difference between " + v.valueA + " and " + v.valueB + " (not directional, unlike percentage change)" };
+      }
+
       case "length-generic": {
         var meters = v.value * UNIT_M[v.fromUnit];
         var result = meters / UNIT_M[v.toUnit];
