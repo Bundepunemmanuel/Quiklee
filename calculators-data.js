@@ -388,7 +388,8 @@ const calculatorsData = [
       { type: "p", text: "The NHS uses this same 18.5–24.9 healthy range regardless of whether weight is entered in stones or kilograms — the classification itself doesn't change with units." }
     ],
     faq: [
-      { q: "How do I calculate BMI in stones and pounds?", a: "Convert stones and pounds to kilograms first (1 stone = 6.35kg), then use the standard metric BMI formula — or just enter your weight directly above and skip the manual conversion." }
+      { q: "How do I calculate BMI in stones and pounds?", a: "Convert stones and pounds to kilograms first (1 stone = 6.35kg), then use the standard metric BMI formula — or just enter your weight directly above and skip the manual conversion." },
+      { q: "How many pounds are in a stone?", a: "14 pounds make one stone. So 11 stone 4 pounds is (11 × 14) + 4 = 158 pounds total, which is what the calculator converts internally before applying the BMI formula." }
     ],
     related: ["bmi-calculator-kg-cm", "bmi-calculator", "how-to-calculate-bmi-manually"]
   },
@@ -616,6 +617,17 @@ const calculatorsData = [
       "For a sale price specifically, or a raise on a salary, the [[discount-percentage-calculator|discount]] and [[pay-raise-calculator|pay raise]] calculators below skip the mental math of figuring out which number is the 'part' and which is the 'whole'. If you need to track how a number changed over time rather than what fraction it represents, see [[percentage-increase-calculator|percentage increase]] instead."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Mental math cheat sheet" },
+      { type: "p", text: "Common percentages of round numbers — useful for quick estimates without reaching for a calculator:" },
+      { type: "table", headers: ["", "10%", "15%", "20%", "25%"], rows: [
+        ["50", "5", "7.5", "10", "12.5"],
+        ["100", "10", "15", "20", "25"],
+        ["200", "20", "30", "40", "50"],
+        ["500", "50", "75", "100", "125"]
+      ]},
+      { type: "p", text: "The fastest shortcut: 10% of any number just moves the decimal point one place left. Everything else builds from there — 20% is double the 10% figure, 5% is half of it." }
+    ],
     faq: [
       { q: "How do I find the percentage of a number?", a: "Multiply the number by the percentage, then divide by 100. To find 25% of 180: 180 × 25 ÷ 100 = 45." },
       { q: "What percentage is X of Y?", a: "Divide X by Y, then multiply by 100. Enter your two numbers above to get the exact answer instantly instead of doing the division by hand." },
@@ -644,6 +656,15 @@ const calculatorsData = [
       "For stacked discounts (like an extra 20% off an already-reduced price), run the sale price back through this calculator a second time — stacked percentages don't add together directly."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "How much you'd save, by price and discount" },
+      { type: "table", headers: ["Price", "10% off", "20% off", "30% off", "50% off"], rows: [
+        ["$50", "$5.00", "$10.00", "$15.00", "$25.00"],
+        ["$100", "$10.00", "$20.00", "$30.00", "$50.00"],
+        ["$200", "$20.00", "$40.00", "$60.00", "$100.00"]
+      ]},
+      { type: "p", text: "Savings scale linearly with price, so a 20% discount always saves twice what a 10% discount does on the same item — useful for a quick gut-check before running the exact numbers above." }
+    ],
     faq: [
       { q: "How do I calculate a discount percentage?", a: "Multiply the original price by the discount percentage, divide by 100 — that's your savings. Subtract that from the original price for the final sale price." },
       { q: "What is percent off?", a: "It's another way of saying discount — '30% off' and '30% discount' mean the same thing: you pay 70% of the original price." },
@@ -672,6 +693,16 @@ const calculatorsData = [
       "This calculates gross pay, before tax — your actual take-home increase will be smaller once tax withholding adjusts. If an offer states the percentage but not the dollar amount (or vice versa), this works in reverse too."
     ],
     caveat: "Results are gross (pre-tax) figures — your net take-home increase will be smaller once tax withholding is applied.",
+    depthBlocks: [
+      { type: "h2", text: "What counts as a good raise, by type" },
+      { type: "table", headers: ["Raise type", "Typical range"], rows: [
+        ["Cost-of-living adjustment", "~3% (tracks inflation)"],
+        ["Standard annual merit increase", "3–5%"],
+        ["Promotion", "10–20%"],
+        ["Changing employers", "10–20%+"]
+      ]},
+      { type: "p", text: "Job-change raises tend to run highest since a new employer is competing against your current offer, not just adjusting an existing one — which is why staying long-term without negotiating can quietly fall behind market rate." }
+    ],
     faq: [
       { q: "How do I calculate salary increase percentage?", a: "Subtract your old salary from your new salary, divide by the old salary, then multiply by 100. A raise from $62,000 to $68,000 is (68,000 − 62,000) ÷ 62,000 × 100 ≈ 9.7%." },
       { q: "What is a good raise percentage?", a: "A standard annual merit increase is typically 3–5%. Promotions or role changes often bring 10–20%, and cost-of-living adjustments track inflation, usually in the low single digits. Context — your industry, performance, and how long since your last raise — matters more than a single benchmark number." },
@@ -700,6 +731,17 @@ const calculatorsData = [
       "This is a directional calculation — it matters which number is 'old' and which is 'new'. For a non-directional comparison between two values, see [[percentage-difference-calculator|percentage difference]] instead."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "A gut-check for multiples" },
+      { type: "p", text: "Percentage increase gets unintuitive past 100% — this table anchors the common multiples:" },
+      { type: "table", headers: ["Change", "Percentage increase"], rows: [
+        ["1.5× the original", "50%"],
+        ["Double (2×)", "100%"],
+        ["Triple (3×)", "200%"],
+        ["10× the original", "900%"]
+      ]},
+      { type: "p", text: "The pattern: percentage increase is always (multiplier − 1) × 100. Doubling isn't a '200% increase' — it's a 100% increase, since you've added exactly one more of the original amount, not two." }
+    ],
     faq: [
       { q: "How do I calculate percentage increase?", a: "Subtract the old value from the new value, divide by the old value, then multiply by 100. Going from 50 to 65: (65 − 50) ÷ 50 × 100 = 30%." },
       { q: "What is the formula for percent increase?", a: "(New value − Old value) ÷ Old value × 100. The result is positive if the new value is larger, negative if it's smaller." },
@@ -728,6 +770,17 @@ const calculatorsData = [
       "Note that percentage decrease isn't simply the negative of percentage increase in reverse — going from 100 to 80 is a 20% decrease, but going back from 80 to 100 is a 25% increase, because the base number changes."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "The mirror table" },
+      { type: "p", text: "Percentage decrease approaches 100% as the value shrinks toward zero — it can never reach or exceed 100% for a positive value dropping to another positive value:" },
+      { type: "table", headers: ["Change", "Percentage decrease"], rows: [
+        ["Down to three-quarters", "25%"],
+        ["Down to half", "50%"],
+        ["Down to a quarter", "75%"],
+        ["Down to zero", "100%"]
+      ]},
+      { type: "p", text: "This is the direct mirror of the increase table — but note it's not symmetric: doubling is a 100% increase, yet halving is only a 50% decrease, because the base value being measured against is different each direction." }
+    ],
     faq: [
       { q: "How do I calculate percentage decrease?", a: "Subtract the new value from the old value, divide by the old value, then multiply by 100. Dropping from 80 to 60: (80 − 60) ÷ 80 × 100 = 25%." },
       { q: "Why isn't percentage decrease just the reverse of percentage increase?", a: "Because the base number changes direction. Falling from 100 to 80 is a 20% decrease, but climbing back from 80 to 100 is a 25% increase — the percentage is always calculated against the starting value, which is different in each direction." },
@@ -756,6 +809,15 @@ const calculatorsData = [
       "This is still a directional measurement, tied to which value is 'old' and which is 'new' — for a comparison that doesn't care about direction, see [[percentage-difference-calculator|percentage difference]]."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Same two numbers, opposite reading" },
+      { type: "p", text: "Direction always depends on which value you call 'old' — swap them and the sign flips:" },
+      { type: "table", headers: ["Old → New", "Reading"], rows: [
+        ["80 → 100", "+25% (increase)"],
+        ["100 → 80", "-20% (decrease)"]
+      ]},
+      { type: "p", text: "Same two numbers, same pair — but which one you enter as 'old' determines whether the result reads as a 25% increase or a 20% decrease. That's the core thing this calculator handles automatically." }
+    ],
     faq: [
       { q: "What's the difference between percentage change and percentage increase?", a: "Percentage increase specifically means the value went up. Percentage change is the general term that covers both directions — this calculator works out automatically whether your numbers represent an increase or a decrease." },
       { q: "How do I calculate percentage change?", a: "(New value − Old value) ÷ Old value × 100. A positive result means an increase, a negative result means a decrease." },
@@ -784,6 +846,15 @@ const calculatorsData = [
       "This is the right calculator when comparing two independent measurements (like two lab results, or two competing prices) where neither one is naturally the 'before' or the 'after'."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Proof it's symmetric" },
+      { type: "p", text: "Swap which number goes first and the answer doesn't move — unlike percentage change, where direction matters:" },
+      { type: "table", headers: ["A", "B", "Percentage difference"], rows: [
+        ["40", "50", "22.2%"],
+        ["50", "40", "22.2%"]
+      ]},
+      { type: "p", text: "Compare that to percentage change on the same numbers: 40 → 50 reads as a +25% increase, while 50 → 40 reads as a -20% decrease. Percentage difference deliberately ignores that direction, which is exactly why it fits comparisons where neither number is naturally 'first'." }
+    ],
     faq: [
       { q: "What is the difference between percentage difference and percentage change?", a: "Percentage change is directional — it treats one number as the starting point and measures how far the other moved from it, so swapping the two numbers changes the answer. Percentage difference is symmetric — it compares both numbers against their average, so swapping them gives the same result either way." },
       { q: "When should I use percentage difference instead of percentage change?", a: "Use percentage difference when neither value is naturally 'before' or 'after' — like comparing two competitors' prices. Use percentage change when one value clearly came first, like tracking a price over time." },
@@ -815,6 +886,19 @@ const calculatorsData = [
       "18–20% is the typical range for good sit-down service in the US; 10-15% is more standard in the UK and much of Europe, where service is often already included."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Tipping norms by country" },
+      { type: "p", text: "Tipping isn't universal — what's standard in the US would look strange, or even rude, elsewhere:" },
+      { type: "table", headers: ["Country", "Typical restaurant tip"], rows: [
+        ["United States", "18–22%"],
+        ["Canada", "15–20%"],
+        ["United Kingdom", "10–15% (often already included as a service charge)"],
+        ["Australia", "Not expected — round up if you like"],
+        ["Japan", "None — can be considered impolite"],
+        ["Most of Western Europe", "5–10% or round up, often already included"]
+      ]},
+      { type: "p", text: "Always check the bill for an already-added service charge before tipping on top of it — in many countries, tipping again on top of that is unusual." }
+    ],
     faq: [
       { q: "How much should I tip?", a: "15–20% is standard for sit-down restaurant service in the US, with 20% typical for good service. In the UK and much of Europe, 10% or simply rounding up is more common, since service is often already included in the bill." },
       { q: "How do I calculate tip percentage?", a: "Multiply the bill by the tip percentage, then divide by 100. An $84.50 bill with an 18% tip: 84.50 × 18 ÷ 100 = $15.21." },
@@ -850,6 +934,19 @@ const calculatorsData = [
       "For an uneven split where people ordered very different amounts, this tool assumes an even split — for itemized splitting, each person's actual order needs to be tallied separately."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Per-person quick reference ($100 bill, 20% tip)" },
+      { type: "p", text: "For a $100 bill with a 20% tip ($120 total), here's the per-person share at common group sizes:" },
+      { type: "table", headers: ["People", "Per person"], rows: [
+        ["2", "$60.00"],
+        ["3", "$40.00"],
+        ["4", "$30.00"],
+        ["5", "$24.00"],
+        ["6", "$20.00"],
+        ["8", "$15.00"]
+      ]},
+      { type: "p", text: "For any other bill amount, the same math scales proportionally — use the calculator above for your exact numbers." }
+    ],
     faq: [
       { q: "How do you split a tip between people?", a: "Add the tip to the bill for a total, then divide that total by the number of people for an even split. This calculator can also round each share up to a clean dollar amount." },
       { q: "Should everyone pay the same amount if orders are different?", a: "That's a group preference, not a rule — an even split is simplest, but if orders varied a lot, it's fairer to calculate each person's tip based on what they actually ordered." },
@@ -879,6 +976,16 @@ const calculatorsData = [
       "The difference is usually small (a percent or two of the tip amount) but it's the technically correct way to calculate a tip, since the server didn't provide the tax."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "How much does it actually matter?" },
+      { type: "p", text: "At a typical 8% sales tax and a 20% tip, here's the real dollar gap between tipping on the subtotal versus the tax-inclusive total:" },
+      { type: "table", headers: ["Pre-tax bill", "Tip on subtotal", "Tip on full total", "Difference"], rows: [
+        ["$50", "$10.00", "$10.80", "$0.80"],
+        ["$100", "$20.00", "$21.60", "$1.60"],
+        ["$200", "$40.00", "$43.20", "$3.20"]
+      ]},
+      { type: "p", text: "The gap scales with the bill — small on a casual meal, but worth the extra 10 seconds of math on a larger group dinner or a higher sales-tax state." }
+    ],
     faq: [
       { q: "Should tip calculation include tax?", a: "Most etiquette guides say no — tip on the pre-tax subtotal, since the server or business didn't provide the tax. In practice, plenty of people tip on the full total anyway, and it's not considered rude either way." },
       { q: "Should you tip before or after tax?", a: "Before — on the subtotal, technically. The gap is usually just a percent or two of the tip amount, so it's a minor correction rather than a big difference." },
