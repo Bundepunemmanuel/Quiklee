@@ -32,7 +32,7 @@ function buildHubListHTML(dataArray, sectionPath) {
   var html = "";
   order.forEach(function (key) {
     var g = groups[key];
-    html += '<div class="cluster-group" id="cluster-' + esc(key) + '"><h3>' + esc(g.label) + '</h3><div class="tool-link-list">';
+    html += '<div class="cluster-group" id="cluster-' + esc(key) + '"><h3>' + esc(g.label) + '<span class="count">' + g.items.length + '</span></h3><div class="accent-rule"></div><div class="tool-link-list">';
     g.items.forEach(function (item) {
       html += '<a href="' + urlFor(sectionPath, item.slug) + '"><span class="tool-name">' + esc(item.title) + '</span><span class="desc">' + esc(item.metaDescription) + "</span></a>";
     });

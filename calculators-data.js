@@ -506,7 +506,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "How do I find the percentage of a number?", a: "Multiply the number by the percentage, then divide by 100. To find 25% of 180: 180 × 25 ÷ 100 = 45." },
-      { q: "What percentage is X of Y?", a: "Divide X by Y, then multiply by 100. Enter your two numbers above to get the exact answer instantly instead of doing the division by hand." }
+      { q: "What percentage is X of Y?", a: "Divide X by Y, then multiply by 100. Enter your two numbers above to get the exact answer instantly instead of doing the division by hand." },
+      { q: "How do I convert a percentage to a decimal?", a: "Divide by 100 — 25% becomes 0.25. This is the step hiding inside every percentage formula, which is why the calculator above does it for you automatically." }
     ],
     related: ["discount-percentage-calculator", "pay-raise-calculator", "percentage-increase-calculator", "percentage-difference-calculator"]
   },
@@ -533,7 +534,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "How do I calculate a discount percentage?", a: "Multiply the original price by the discount percentage, divide by 100 — that's your savings. Subtract that from the original price for the final sale price." },
-      { q: "What is percent off?", a: "It's another way of saying discount — '30% off' and '30% discount' mean the same thing: you pay 70% of the original price." }
+      { q: "What is percent off?", a: "It's another way of saying discount — '30% off' and '30% discount' mean the same thing: you pay 70% of the original price." },
+      { q: "Can I work out the discount from the sale price instead?", a: "Yes — if you know the original price and the sale price, subtract the sale price from the original, divide by the original, then multiply by 100 to get the discount percentage." }
     ],
     related: ["percentage-calculator", "pay-raise-calculator", "tip-calculator"]
   },
@@ -560,7 +562,8 @@ const calculatorsData = [
     caveat: "Results are gross (pre-tax) figures — your net take-home increase will be smaller once tax withholding is applied.",
     faq: [
       { q: "How do I calculate salary increase percentage?", a: "Subtract your old salary from your new salary, divide by the old salary, then multiply by 100. A raise from $62,000 to $68,000 is (68,000 − 62,000) ÷ 62,000 × 100 ≈ 9.7%." },
-      { q: "What is a good raise percentage?", a: "A standard annual merit increase is typically 3–5%. Promotions or role changes often bring 10–20%, and cost-of-living adjustments track inflation, usually in the low single digits. Context — your industry, performance, and how long since your last raise — matters more than a single benchmark number." }
+      { q: "What is a good raise percentage?", a: "A standard annual merit increase is typically 3–5%. Promotions or role changes often bring 10–20%, and cost-of-living adjustments track inflation, usually in the low single digits. Context — your industry, performance, and how long since your last raise — matters more than a single benchmark number." },
+      { q: "Does this show my raise before or after tax?", a: "Before tax (gross). Your actual take-home increase will be smaller once your employer adjusts tax withholding on the new salary — this calculator shows the raw percentage and dollar change agreed with your employer." }
     ],
     related: ["percentage-calculator", "discount-percentage-calculator"]
   },
@@ -587,7 +590,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "How do I calculate percentage increase?", a: "Subtract the old value from the new value, divide by the old value, then multiply by 100. Going from 50 to 65: (65 − 50) ÷ 50 × 100 = 30%." },
-      { q: "What is the formula for percent increase?", a: "(New value − Old value) ÷ Old value × 100. The result is positive if the new value is larger, negative if it's smaller." }
+      { q: "What is the formula for percent increase?", a: "(New value − Old value) ÷ Old value × 100. The result is positive if the new value is larger, negative if it's smaller." },
+      { q: "Can percentage increase be more than 100%?", a: "Yes — if a value more than doubles. Going from 10 to 25 is a 150% increase, since the value grew by more than its entire original amount." }
     ],
     related: ["percentage-decrease-calculator", "percentage-change-calculator", "percentage-difference-calculator", "pay-raise-calculator"]
   },
@@ -614,7 +618,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "How do I calculate percentage decrease?", a: "Subtract the new value from the old value, divide by the old value, then multiply by 100. Dropping from 80 to 60: (80 − 60) ÷ 80 × 100 = 25%." },
-      { q: "Why isn't percentage decrease just the reverse of percentage increase?", a: "Because the base number changes direction. Falling from 100 to 80 is a 20% decrease, but climbing back from 80 to 100 is a 25% increase — the percentage is always calculated against the starting value, which is different in each direction." }
+      { q: "Why isn't percentage decrease just the reverse of percentage increase?", a: "Because the base number changes direction. Falling from 100 to 80 is a 20% decrease, but climbing back from 80 to 100 is a 25% increase — the percentage is always calculated against the starting value, which is different in each direction." },
+      { q: "Can percentage decrease be more than 100%?", a: "Only if the new value is zero or negative. Dropping from 50 to 0 is a 100% decrease exactly; dropping below zero would exceed 100%, which only makes sense for values that can go negative, like temperature or account balance." }
     ],
     related: ["percentage-increase-calculator", "percentage-change-calculator", "discount-percentage-calculator"]
   },
@@ -641,7 +646,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "What's the difference between percentage change and percentage increase?", a: "Percentage increase specifically means the value went up. Percentage change is the general term that covers both directions — this calculator works out automatically whether your numbers represent an increase or a decrease." },
-      { q: "How do I calculate percentage change?", a: "(New value − Old value) ÷ Old value × 100. A positive result means an increase, a negative result means a decrease." }
+      { q: "How do I calculate percentage change?", a: "(New value − Old value) ÷ Old value × 100. A positive result means an increase, a negative result means a decrease." },
+      { q: "What does a negative percentage change mean?", a: "It means the value went down — a -15% change is the same thing as a 15% decrease, just expressed with a sign instead of the word 'decrease'." }
     ],
     related: ["percentage-increase-calculator", "percentage-decrease-calculator", "percentage-difference-calculator"]
   },
@@ -668,7 +674,8 @@ const calculatorsData = [
     caveat: null,
     faq: [
       { q: "What is the difference between percentage difference and percentage change?", a: "Percentage change is directional — it treats one number as the starting point and measures how far the other moved from it, so swapping the two numbers changes the answer. Percentage difference is symmetric — it compares both numbers against their average, so swapping them gives the same result either way." },
-      { q: "When should I use percentage difference instead of percentage change?", a: "Use percentage difference when neither value is naturally 'before' or 'after' — like comparing two competitors' prices. Use percentage change when one value clearly came first, like tracking a price over time." }
+      { q: "When should I use percentage difference instead of percentage change?", a: "Use percentage difference when neither value is naturally 'before' or 'after' — like comparing two competitors' prices. Use percentage change when one value clearly came first, like tracking a price over time." },
+      { q: "Can percentage difference be negative?", a: "No — percentage difference is always shown as a positive number, since it measures the size of the gap between two values, not which direction it moved. That's the direct tradeoff for it being symmetric." }
     ],
     related: ["percentage-change-calculator", "percentage-increase-calculator", "percentage-calculator"]
   },
