@@ -11,7 +11,7 @@
 */
 const fs = require("fs");
 const path = require("path");
-const { esc, buildToolContentHTML, buildHubListHTML, buildFaqSchema } = require("./render-lib.js");
+const { esc, buildToolContentHTML, buildHubListHTML, buildClusterNav, buildFaqSchema } = require("./render-lib.js");
 
 const calculatorsData = require("./calculators-data.js");
 const convertersData = require("./converters-data.js");
@@ -98,6 +98,7 @@ hubs.forEach(function (hub) {
     H1: "All " + hub.label,
     INTRO: hub.intro,
     HUB_LIST: buildHubListHTML(hub.data, hub.folderized ? hub.path : ""),
+    HUB_NAV: buildClusterNav(hub.data, hub.folderized ? hub.path : ""),
     FAQ_SCHEMA_TAG: ""
   });
   fs.writeFileSync(path.join(__dirname, hub.file), html);

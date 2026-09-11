@@ -67,6 +67,12 @@
     return "Obese";
   }
 
+  /* Maps a BMI value onto a 0-100% position for the visual gauge (15 -> 0%, 40 -> 100%, clamped) */
+  function bmiGaugePercent(bmi) {
+    var pct = ((bmi - 15) / (40 - 15)) * 100;
+    return Math.max(2, Math.min(98, pct));
+  }
+
   var UNIT_M = { mm: 0.001, cm: 0.01, m: 1, km: 1000, in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344 };
 
   function calculate(formula, v) {
@@ -80,20 +86,20 @@
           var hM = v.height / 100;
           bmi = v.weight / (hM * hM);
         }
-        return { main: "BMI: " + bmi.toFixed(1), sub: "Category: " + bmiCategory(bmi) };
+        return { main: "BMI: " + bmi.toFixed(1), sub: "Category: " + bmiCategory(bmi), gaugeValue: bmiGaugePercent(bmi) };
       }
 
       case "bmi-metric": {
         var hM2 = v.height / 100;
         var bmi2 = v.weight / (hM2 * hM2);
-        return { main: "BMI: " + bmi2.toFixed(1), sub: "Category: " + bmiCategory(bmi2) };
+        return { main: "BMI: " + bmi2.toFixed(1), sub: "Category: " + bmiCategory(bmi2), gaugeValue: bmiGaugePercent(bmi2) };
       }
 
       case "bmi-athletic": {
         var hM3 = v.height / 100;
         var bmi3 = v.weight / (hM3 * hM3);
         var note = "Standard categories are unreliable for higher muscle mass — treat this as a formality, not feedback on body composition.";
-        return { main: "BMI: " + bmi3.toFixed(1) + " (" + bmiCategory(bmi3) + ")", sub: note };
+        return { main: "BMI: " + bmi3.toFixed(1) + " (" + bmiCategory(bmi3) + ")", sub: note, gaugeValue: bmiGaugePercent(bmi3) };
       }
 
       case "bmi-waist": {
@@ -101,13 +107,13 @@
         var bmi4 = v.weight / (hM4 * hM4);
         var ratio = v.waist / v.height;
         var ratioNote = ratio < 0.5 ? "within the typically healthy range (under 0.5)" : "above the typical 0.5 guideline";
-        return { main: "BMI: " + bmi4.toFixed(1), sub: "Waist-to-height ratio: " + ratio.toFixed(2) + " — " + ratioNote };
+        return { main: "BMI: " + bmi4.toFixed(1), sub: "Waist-to-height ratio: " + ratio.toFixed(2) + " — " + ratioNote, gaugeValue: bmiGaugePercent(bmi4) };
       }
 
       case "bmi-age-context": {
         var hM5 = v.height / 100;
         var bmi5 = v.weight / (hM5 * hM5);
-        return { main: "BMI: " + bmi5.toFixed(1) + " (" + bmiCategory(bmi5) + ")", sub: "Reference only — pair this with waist circumference for a fuller picture at this age range." };
+        return { main: "BMI: " + bmi5.toFixed(1) + " (" + bmiCategory(bmi5) + ")", sub: "Reference only — pair this with waist circumference for a fuller picture at this age range.", gaugeValue: bmiGaugePercent(bmi5) };
       }
 
       case "bmi-imperial-stones": {
@@ -117,7 +123,7 @@
         var cm = totalInches * 2.54;
         var hM6 = cm / 100;
         var bmi6 = kg / (hM6 * hM6);
-        return { main: "BMI: " + bmi6.toFixed(1), sub: "Category: " + bmiCategory(bmi6) + " (≈" + kg.toFixed(1) + "kg, " + cm.toFixed(0) + "cm)" };
+        return { main: "BMI: " + bmi6.toFixed(1), sub: "Category: " + bmiCategory(bmi6) + " (≈" + kg.toFixed(1) + "kg, " + cm.toFixed(0) + "cm)", gaugeValue: bmiGaugePercent(bmi6) };
       }
 
       case "tip-standard": {
@@ -286,6 +292,15 @@
       $("#result-main").textContent = res.main;
       $("#result-sub").textContent = res.sub || "";
       $("#result-box").classList.add("show");
+
+      if (res.gaugeValue !== undefined) {
+        var gaugeWrap = $("#gauge-wrap");
+        var marker = $("#gauge-marker");
+        if (gaugeWrap && marker) {
+          gaugeWrap.style.display = "block";
+          marker.style.left = res.gaugeValue + "%";
+        }
+      }
     });
   }
 
