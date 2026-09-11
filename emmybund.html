@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keyword Research</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root { --bg:#F1F2F0; --surface:#FFFFFF; --text:#14181C; --muted:#5B6470; --border:#DCDFE3; --primary:#2B4C7E; --result:#1F8A5F; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, 'Inter', sans-serif; background:var(--bg); color:var(--text); padding:20px 16px 60px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  p.muted { color: var(--muted); font-size: 0.88rem; margin-top:0; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  label { display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px; }
+  input[type=text], input[type=password] { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:0.95rem; margin-bottom:10px; }
+  button { background: var(--primary); color:#fff; border:none; padding:10px 16px; border-radius:6px; font-size:0.9rem; font-weight:600; cursor:pointer; }
+  button:hover { opacity:0.9; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  button.secondary { background: var(--result); }
+  .credits { font-size:0.8rem; color:var(--muted); margin-top:8px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:0.88rem; }
+  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); vertical-align: top; }
+  th { color:var(--muted); font-weight:600; }
+  .qa-q { font-weight:600; }
+  .qa-a { color:var(--muted); font-size:0.85rem; margin-top:2px; }
+  #gate { max-width: 340px; margin: 80px auto; text-align:center; }
+  #app { display:none; }
+  .error { color:#B8443A; font-size:0.85rem; margin-top:6px; }
+  .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>Keyword Research</h1>
+  <p class="muted">Enter the dashboard password</p>
+  <input type="password" id="pw-input" placeholder="Password">
+  <button onclick="unlock()">Unlock</button>
+  <div class="error" id="pw-error"></div>
+</div>
+
+<div id="app" class="wrap">
+  <h1>Keyword Research Dashboard</h1>
+  <p class="muted">Serper.dev-powered — long-tail discovery and People Also Ask data.</p>
+
+  <div class="card">
+    <label for="seed">Seed keyword</label>
+    <input type="text" id="seed" placeholder="e.g. roi calculator">
+    <div class="toolbar">
+      <button onclick="findLongtails()" id="find-btn">Find Long-tails</button>
+      <span class="credits" id="longtail-credits"></span>
+    </div>
+    <div class="error" id="longtail-error"></div>
+  </div>
+
+  <div class="card" id="results-card" style="display:none;">
+    <div class="toolbar">
+      <button onclick="selectAll(true)">Select all</button>
+      <button onclick="selectAll(false)">Select none</button>
+      <button class="secondary" onclick="getPaa()" id="paa-btn">Get PAA for selected</button>
+      <span class="credits" id="paa-credits"></span>
+    </div>
+    <div class="error" id="paa-error"></div>
+    <table id="longtail-table">
+      <thead><tr><th style="width:30px;"></th><th>Long-tail keyword</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card" id="paa-results-card" style="display:none;">
+    <div class="toolbar">
+      <button onclick="downloadJSON()">Download JSON</button>
+    </div>
+    <table id="paa-table">
+      <thead><tr><th>Keyword</th><th>Question / Answer</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let adminKey = "";
+  let currentKeywords = [];
+  let paaData = [];
+
+  function unlock() {
+    adminKey = document.getElementById("pw-input").value;
+    if (!adminKey) return;
+    sessionStorage.setItem("kw_admin_key", adminKey);
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  }
+
+  window.addEventListener("load", () => {
+    const stored = sessionStorage.getItem("kw_admin_key");
+    if (stored) { adminKey = stored; document.getElementById("gate").style.display = "none"; document.getElementById("app").style.display = "block"; }
+  });
+
+  async function apiCall(path, body) {
+    const res = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 401) {
+      sessionStorage.removeItem("kw_admin_key");
+      document.getElementById("app").style.display = "none";
+      document.getElementById("gate").style.display = "block";
+      document.getElementById("pw-error").textContent = "Session expired or wrong password — try again.";
+      throw new Error("Unauthorized");
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Request failed");
+    return data;
+  }
+
+  async function findLongtails() {
+    const seed = document.getElementById("seed").value.trim();
+    const errEl = document.getElementById("longtail-error");
+    errEl.textContent = "";
+    if (!seed) { errEl.textContent = "Enter a seed keyword first."; return; }
+
+    const btn = document.getElementById("find-btn");
+    btn.disabled = true; btn.textContent = "Searching…";
+
+    try {
+      const data = await apiCall("/api/longtail", { seed });
+      currentKeywords = data.keywords;
+      renderLongtailTable(currentKeywords);
+      document.getElementById("longtail-credits").textContent = `${data.creditsUsed} Serper credits used`;
+      document.getElementById("results-card").style.display = "block";
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Find Long-tails";
+    }
+  }
+
+  function renderLongtailTable(keywords) {
+    const tbody = document.querySelector("#longtail-table tbody");
+    tbody.innerHTML = "";
+    keywords.forEach((kw) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td><input type="checkbox" class="kw-check" value="${kw.replace(/"/g,'&quot;')}" checked></td><td>${kw}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function selectAll(state) {
+    document.querySelectorAll(".kw-check").forEach((cb) => cb.checked = state);
+  }
+
+  async function getPaa() {
+    const selected = Array.from(document.querySelectorAll(".kw-check:checked")).map((cb) => cb.value);
+    const errEl = document.getElementById("paa-error");
+    errEl.textContent = "";
+    if (selected.length === 0) { errEl.textContent = "Select at least one keyword."; return; }
+
+    const btn = document.getElementById("paa-btn");
+    btn.disabled = true; btn.textContent = "Fetching PAA…";
+
+    try {
+      const data = await apiCall("/api/paa", { keywords: selected });
+      paaData = data.results;
+      renderPaaTable(paaData);
+      document.getElementById("paa-credits").textContent = `${data.creditsUsed} Serper credits used`;
+      document.getElementById("paa-results-card").style.display = "block";
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Get PAA for selected";
+    }
+  }
+
+  function renderPaaTable(results) {
+    const tbody = document.querySelector("#paa-table tbody");
+    tbody.innerHTML = "";
+    results.forEach((r) => {
+      if (r.questions.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${r.keyword}</td><td class="qa-a">No PAA data found${r.error ? " ("+r.error+")" : ""}</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+      r.questions.forEach((q, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${i === 0 ? r.keyword : ""}</td><td><div class="qa-q">${q.question}</div><div class="qa-a">${q.answer}</div></td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function downloadJSON() {
+    const blob = new Blob([JSON.stringify(paaData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "keyword-research-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
