@@ -7,6 +7,81 @@ function urlFor(sectionPath, slug) {
   return sectionPath ? "/" + sectionPath + "/" + slug : "/" + slug;
 }
 
+/* Builds the jump-to-cluster chip nav shown at the top of a hub page */
+function buildClusterNav(dataArray, sectionPath) {
+  var seen = {};
+  var order = [];
+  dataArray.forEach(function (e) {
+    if (!seen[e.cluster]) { seen[e.cluster] = e.clusterLabel; order.push(e.cluster); }
+  });
+  var html = "";
+  order.forEach(function (key) {
+    html += '<a href="#cluster-' + esc(key) + '" class="cluster-chip">' + esc(seen[key]) + "</a>";
+  });
+  return html;
+}
+
+/* Builds the inner #hub-list content for a category hub page — ledger rows, not cards */
+function buildHubListHTML(dataArray, sectionPath) {
+  var groups = {};
+  var order = [];
+  dataArray.forEach(function (e) {
+    if (!groups[e.cluster]) { groups[e.cluster] = { label: e.clusterLabel, items: [] }; order.push(e.cluster); }
+    groups[e.cluster].items.push(e);
+  });
+  var html = "";
+  order.forEach(function (key) {
+    var g = groups[key];
+    html += '<div class="cluster-group" id="cluster-' + esc(key) + '"><h3>' + esc(g.label) + '</h3><div class="tool-link-list">';
+    g.items.forEach(function (item) {
+      html += '<a href="' + urlFor(sectionPath, item.slug) + '"><span class="tool-name">' + esc(item.title) + '</span><span class="desc">' + esc(item.metaDescription) + "</span></a>";
+    });
+    html += "</div></div>";
+  });
+  return html;
+}
+
+/* Renders the depth-block content (risks, limitations, classification tables, etc.)
+   using the same h2/p/table/steps pattern as info-type pages — but attachable to
+   any tool page, form or info, wherever real added depth is warranted. */
+function buildDepthBlocksHTML(blocks) {
+  if (!blocks || !blocks.length) return "";
+  var html = '<div class="depth-blocks">';
+  blocks.forEach(function (block) {
+    if (block.type === "h2") html += "<h2>" + esc(block.text) + "</h2>";
+    else if (block.type === "p") html += "<p>" + esc(block.text) + "</p>";
+    else if (block.type === "steps") {
+      html += "<ol class='steps'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ol>";
+    } else if (block.type === "list") {
+      html += "<ul class='depth-list'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ul>";
+    } else if (block.type === "table") {
+      html += '<table class="info-table"><thead><tr>' + block.headers.map(function (h) { return "<th>" + esc(h) + "</th>"; }).join("") + "</tr></thead><tbody>";
+      block.rows.forEach(function (row) {
+        html += "<tr>" + row.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>";
+      });
+      html += "</tbody></table>";
+    }
+  });
+  html += "</div>";
+  return html;
+}
+
+/* Renders an empty gauge shell for form-type entries that request one (e.g. BMI).
+   main.js positions the marker and colors it once a result is calculated. */
+function buildGaugeHTML(gauge) {
+  if (!gauge) return "";
+  var html = '<div class="gauge-wrap" id="gauge-wrap" style="display:none;">';
+  html += '<div class="gauge-bar">';
+  gauge.bands.forEach(function (band) {
+    html += '<div class="gauge-band" style="flex:' + band.weight + ';background:' + band.color + ';" title="' + esc(band.label) + '"></div>';
+  });
+  html += '<div class="gauge-marker" id="gauge-marker"></div>';
+  html += "</div>";
+  html += '<div class="gauge-labels">' + gauge.bands.map(function (b) { return "<span>" + esc(b.label) + "</span>"; }).join("") + "</div>";
+  html += "</div>";
+  return html;
+}
+
 function esc(str) {
   return String(str).replace(/[&<>"']/g, function (c) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -53,6 +128,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
     });
     html += '<button type="submit" class="btn-calc">Calculate</button>';
     html += '<div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div>';
+    if (entry.gauge) html += buildGaugeHTML(entry.gauge);
     html += "</form></div>";
   } else if (entry.type === "info") {
     html += '<div class="tool-card">';
@@ -79,6 +155,10 @@ function buildToolContentHTML(entry, allData, sectionPath) {
     html += "</div>";
   } else if (entry.caveat) {
     html += '<div class="explainer"><div class="caveat">' + esc(entry.caveat) + "</div></div>";
+  }
+
+  if (entry.depthBlocks && entry.depthBlocks.length) {
+    html += buildDepthBlocksHTML(entry.depthBlocks);
   }
 
   if (entry.faq && entry.faq.length) {
@@ -126,30 +206,15 @@ function buildFaqSchema(faqList) {
 }
 
 /* Builds the inner #hub-list content for a category hub page */
-function buildHubListHTML(dataArray, sectionPath) {
-  var groups = {};
-  var order = [];
-  dataArray.forEach(function (e) {
-    if (!groups[e.cluster]) { groups[e.cluster] = { label: e.clusterLabel, items: [] }; order.push(e.cluster); }
-    groups[e.cluster].items.push(e);
-  });
-  var html = "";
-  order.forEach(function (key) {
-    var g = groups[key];
-    html += '<div class="cluster-group"><h3>' + esc(g.label) + '</h3><div class="tool-link-list">';
-    g.items.forEach(function (item) {
-      html += '<a href="' + urlFor(sectionPath, item.slug) + '">' + esc(item.title) + '<span class="desc">' + esc(item.metaDescription) + "</span></a>";
-    });
-    html += "</div></div>";
-  });
-  return html;
-}
 
 module.exports = {
   esc: esc,
   findEntry: findEntry,
   buildToolContentHTML: buildToolContentHTML,
   buildHubListHTML: buildHubListHTML,
+  buildClusterNav: buildClusterNav,
+  buildDepthBlocksHTML: buildDepthBlocksHTML,
+  buildGaugeHTML: buildGaugeHTML,
   buildFaqHTML: buildFaqHTML,
   buildFaqSchema: buildFaqSchema
 };

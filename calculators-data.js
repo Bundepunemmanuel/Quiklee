@@ -6,6 +6,16 @@
    faq: 3-4 Q&A pairs using real long-tail search phrasing, answered in plain language
    explainer: supports [[slug|link text]] for natural in-body contextual links
 */
+/* Shared visual gauge for every BMI-formula calculator — WHO classification bands */
+const BMI_GAUGE = {
+  bands: [
+    { label: "Underweight", weight: 3.5, color: "#6B9BD1" },
+    { label: "Healthy", weight: 6.5, color: "#1F8A5F" },
+    { label: "Overweight", weight: 5, color: "#C77D22" },
+    { label: "Obese", weight: 10, color: "#B8443A" }
+  ]
+};
+
 const calculatorsData = [
 
   /* ================= BMI & BODY CLUSTER ================= */
@@ -21,6 +31,7 @@ const calculatorsData = [
     intro: "Enter your height and weight to get your BMI instantly. Switch units below — this version works with either metric or imperial.",
     type: "form",
     formula: "bmi-universal",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "unit", label: "Units", type: "select", options: [
         { value: "metric", label: "Metric (kg, cm)" },
@@ -34,10 +45,47 @@ const calculatorsData = [
       "If your result looks off for your body type, the [[bmi-calculator-for-bodybuilders|bodybuilder]], [[bmi-calculator-for-athletes|athlete]], or [[bmi-calculator-waist-circumference|waist-circumference]] versions below account for that."
     ],
     caveat: "BMI was designed as a population-level statistic in the 1830s, not an individual diagnostic tool. Use it as one data point, not the whole picture.",
+    depthBlocks: [
+      { type: "h2", text: "BMI classification table" },
+      { type: "table", headers: ["BMI range", "Category"], rows: [
+        ["Below 16", "Severe thinness"],
+        ["16 – 17", "Moderate thinness"],
+        ["17 – 18.5", "Mild thinness"],
+        ["18.5 – 25", "Healthy weight"],
+        ["25 – 30", "Overweight"],
+        ["30 – 35", "Obese Class I"],
+        ["35 – 40", "Obese Class II"],
+        ["Above 40", "Obese Class III"]
+      ]},
+      { type: "h2", text: "Risks associated with being overweight" },
+      { type: "p", text: "A BMI in the overweight or obese range is linked to a higher risk of several conditions, according to the CDC:" },
+      { type: "list", items: [
+        "High blood pressure",
+        "Type II diabetes",
+        "Coronary heart disease and stroke",
+        "Higher LDL ('bad') cholesterol and lower HDL ('good') cholesterol",
+        "Certain cancers",
+        "Sleep apnea and breathing problems",
+        "Osteoarthritis from added joint strain"
+      ]},
+      { type: "h2", text: "Risks associated with being underweight" },
+      { type: "list", items: [
+        "Nutrient deficiencies and weakened immune function",
+        "Osteoporosis and increased fracture risk",
+        "Fertility issues in women",
+        "Slower recovery from illness or surgery"
+      ]},
+      { type: "p", text: "Being significantly underweight can also point to an underlying condition — it's worth mentioning to a doctor if it isn't explained by diet or activity level." },
+      { type: "h2", text: "Limitations of BMI" },
+      { type: "p", text: "In adults, BMI can't distinguish muscle from fat, so it's known to overstate body fat in muscular people and can understate it in older adults who've lost muscle mass. It also doesn't account for age, sex, ethnicity, or where fat is carried on the body." },
+      { type: "p", text: "In children and teens, BMI is interpreted differently — using age- and sex-specific percentile charts rather than the flat adult categories above, since a growing body's proportions change constantly." }
+    ],
     faq: [
-      { q: "What is a healthy BMI?", a: "For most adults, a BMI between 18.5 and 24.9 is classed as a healthy weight range. Below 18.5 is underweight, 25–29.9 is overweight, and 30+ is obese — but these bands don't account for muscle mass or body shape." },
-      { q: "How is BMI calculated?", a: "BMI is your weight in kilograms divided by your height in metres, squared. In pounds and inches, it's (weight ÷ height²) × 703. See the step-by-step page linked below for a full worked example." },
-      { q: "Is BMI accurate for everyone?", a: "No. It's a reasonable screening tool for the general population but is known to overstate body fat in muscular people and can be less reliable for older adults, pregnant women, and children. Use the specialized calculators below if any of those apply to you." }
+      { q: "What is a normal BMI?", a: "A BMI between 18.5 and 24.9 is classed as a normal, healthy weight range for most adults. Below 18.5 is underweight, 25–29.9 is overweight, and 30+ falls into the obese category." },
+      { q: "Is a BMI of 25 chubby?", a: "A BMI of 25 sits right at the boundary between 'healthy weight' and 'overweight' on the standard scale — it's not a dramatic reading either way, and BMI alone can't tell you how much of that is muscle versus fat." },
+      { q: "What is a good BMI for a 70 year old?", a: "The standard 18.5–24.9 range still applies, though some research associates a slightly higher BMI (up into the mid-to-high 20s) with no added health risk for adults over 65, compared with younger age groups." },
+      { q: "Are BMI calculators accurate?", a: "The math itself is exact — it's a simple formula. What's debated is how well the *result* reflects actual health, since BMI can't see muscle mass, bone density, or where fat is stored. Treat it as a quick screening number, not a diagnosis." },
+      { q: "How is BMI calculated?", a: "BMI is your weight in kilograms divided by your height in metres, squared. In pounds and inches, it's (weight ÷ height²) × 703. See the step-by-step page linked below for a full worked example." }
     ],
     related: ["bmi-calculator-kg-cm", "bmi-calculator-for-athletes", "bmi-calculator-waist-circumference", "bmi-calculator-stones-pounds", "how-to-calculate-bmi-manually", "ideal-weight-calculator"]
   },
@@ -53,6 +101,7 @@ const calculatorsData = [
     intro: "No dropdown, no unit toggle — just weight in kilograms and height in centimetres, the way most of the world measures both.",
     type: "form",
     formula: "bmi-metric",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "70" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "175" }
@@ -80,6 +129,7 @@ const calculatorsData = [
     intro: "Muscle is denser than fat, so BMI — which only knows total weight — routinely flags lean, muscular lifters as 'overweight' or 'obese'. This version calculates the same number but tells you what it actually means for a bodybuilder's physique.",
     type: "form",
     formula: "bmi-athletic",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "95" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "178" },
@@ -112,6 +162,7 @@ const calculatorsData = [
     intro: "Rugby players, sprinters, rowers, and powerlifters all tend to run 'high' on standard BMI charts for the same reason bodybuilders do — more muscle per centimetre of height than the population BMI was calibrated on.",
     type: "form",
     formula: "bmi-athletic",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "82" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "180" },
@@ -144,6 +195,7 @@ const calculatorsData = [
     intro: "BMI alone can't tell where your weight is carried. Adding waist circumference gives you a waist-to-height ratio too — a measurement several studies rate as a better predictor of cardiovascular risk than BMI by itself.",
     type: "form",
     formula: "bmi-waist",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "78" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "172" },
@@ -154,6 +206,15 @@ const calculatorsData = [
       "Measure your waist at the narrowest point, usually just above the belly button, without pulling the tape measure tight."
     ],
     caveat: "Waist-to-height ratio is a screening guide, not a diagnosis — it doesn't account for pregnancy, certain medical conditions, or body shapes where fat is carried elsewhere.",
+    depthBlocks: [
+      { type: "h2", text: "Waist circumference risk thresholds (absolute, not ratio-based)" },
+      { type: "p", text: "Separately from the waist-to-height ratio above, health agencies including the NIH also flag risk based on raw waist measurement alone, regardless of height:" },
+      { type: "table", headers: ["Group", "Increased risk above"], rows: [
+        ["Men", "40 in / 102 cm"],
+        ["Women", "35 in / 88 cm"]
+      ]},
+      { type: "p", text: "These absolute thresholds and the waist-to-height ratio measure slightly different things and can occasionally disagree for very tall or very short people — the ratio tends to scale more fairly across a wide height range." }
+    ],
     faq: [
       { q: "What is a healthy waist-to-height ratio?", a: "A ratio below 0.5 (waist measurement less than half your height) is the general guideline used across most age groups, though some clinicians allow slightly higher for adults over 65." },
       { q: "Is waist size a better health measure than BMI?", a: "For cardiovascular risk specifically, many studies suggest yes — waist-to-height ratio reflects where fat is stored, which BMI can't see at all. It's best used alongside BMI, not as a full replacement." }
@@ -172,6 +233,7 @@ const calculatorsData = [
     intro: "After 40, body composition shifts even if weight on the scale doesn't — muscle mass declines gradually and fat distribution tends to shift toward the abdomen, especially around perimenopause and menopause. The BMI formula itself doesn't change, but what a given number means for health risk can.",
     type: "form",
     formula: "bmi-age-context",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "68" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "165" },
@@ -204,6 +266,7 @@ const calculatorsData = [
     intro: "Men typically start losing muscle mass (sarcopenia) gradually from their 30s onward, accelerating after 50. Two men with an identical BMI at 30 and 55 can have very different muscle-to-fat ratios, even at the same number.",
     type: "form",
     formula: "bmi-age-context",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "weight", label: "Weight (kg)", type: "number", placeholder: "85" },
       { id: "height", label: "Height (cm)", type: "number", placeholder: "178" },
@@ -236,6 +299,7 @@ const calculatorsData = [
     intro: "Built for stones and pounds rather than kilograms — the way weight is still commonly given in the UK and Ireland. Height goes in as feet and inches.",
     type: "form",
     formula: "bmi-imperial-stones",
+    gauge: BMI_GAUGE,
     fields: [
       { id: "stones", label: "Weight — stones", type: "number", placeholder: "11" },
       { id: "pounds", label: "Weight — pounds", type: "number", placeholder: "4" },

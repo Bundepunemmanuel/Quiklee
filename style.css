@@ -1,21 +1,24 @@
 /* ==========================================================================
    Quiklee — shared styles
-   Tokens: bg #F7F8FA, surface #FFFFFF, text #14171F, muted #5B6472,
-   border #E3E6EB, primary #2D5BFF, primary-dark #1E3FCC, accent #FFB020
-   Type: Space Grotesk (display) / Inter (body)
+   Tokens: bg #F1F2F0 (paper), surface #FFFFFF, ink #14181C, muted #5B6470,
+   border #DCDFE3, primary #2B4C7E (structural blue), result #1F8A5F (phosphor
+   green — calculator readouts only), accent-tint #FFF4E0
+   Type: Space Grotesk (display) / Inter (body) / JetBrains Mono (results only)
    ========================================================================== */
 
 :root {
-  --bg: #F7F8FA;
+  --bg: #F1F2F0;
   --surface: #FFFFFF;
-  --text: #14171F;
-  --muted: #5B6472;
-  --border: #E3E6EB;
-  --primary: #2D5BFF;
-  --primary-dark: #1E3FCC;
-  --primary-tint: #EAF0FF;
-  --accent: #FFB020;
-  --accent-tint: #FFF4E0;
+  --text: #14181C;
+  --muted: #5B6470;
+  --border: #DCDFE3;
+  --primary: #2B4C7E;
+  --primary-dark: #1D3760;
+  --primary-tint: #E9EEF5;
+  --result: #1F8A5F;
+  --result-bg: #12201B;
+  --accent: #C77D22;
+  --accent-tint: #FBF0E1;
   --radius: 10px;
   --radius-sm: 6px;
   --max-w: 760px;
@@ -282,23 +285,24 @@ main.tool-page {
 
 .result-box {
   margin-top: 22px;
-  padding: 18px 20px;
-  background: var(--accent-tint);
-  border: 1px solid #F3D89A;
+  padding: 20px 22px;
+  background: var(--result-bg);
   border-radius: var(--radius-sm);
   display: none;
 }
 .result-box.show { display: block; }
 .result-box .result-main {
-  font-size: 1.5rem;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+  font-size: 1.6rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--result);
+  letter-spacing: 0.01em;
 }
 .result-box .result-sub {
-  font-size: 0.88rem;
-  color: var(--muted);
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #8CA69B;
+  margin-top: 6px;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ---------- Hook line (answer-first, RepMax-style) ---------- */
@@ -384,18 +388,90 @@ main.tool-page {
 }
 .related-list a:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
 
-/* ---------- Hub / directory pages ---------- */
-.cluster-group { margin-bottom: 32px; }
-.cluster-group h3 { font-size: 0.95rem; color: var(--muted); text-transform: none; margin-bottom: 10px; }
-.tool-link-list { display: flex; flex-direction: column; gap: 2px; }
+/* ---------- Hub / directory pages (ledger layout) ---------- */
+.cluster-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 20px 28px;
+}
+.cluster-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.84rem;
+  color: var(--text);
+  background: var(--surface);
+}
+.cluster-chip:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+.cluster-group { margin-bottom: 36px; scroll-margin-top: 76px; }
+.cluster-group h3 {
+  font-size: 0.92rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.tool-link-list { display: flex; flex-direction: column; }
 .tool-link-list a {
-  padding: 10px 0;
+  display: block;
+  padding: 13px 4px 13px 14px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-size: 0.96rem;
+  border-left: 3px solid transparent;
 }
-.tool-link-list a:hover { color: var(--primary); text-decoration: none; }
-.tool-link-list a .desc { display: block; color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+.tool-link-list a:hover {
+  text-decoration: none;
+  background: var(--surface);
+  border-left-color: var(--result);
+}
+.tool-link-list a .tool-name {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+.tool-link-list a:hover .tool-name { color: var(--primary); }
+.tool-link-list a .desc { display: block; color: var(--muted); font-size: 0.84rem; margin-top: 3px; }
+
+/* ---------- BMI-style result gauge ---------- */
+.gauge-wrap { margin-top: 16px; }
+.gauge-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.gauge-band:first-child { border-radius: 6px 0 0 6px; }
+.gauge-band:last-child { border-radius: 0 6px 6px 0; }
+.gauge-marker {
+  position: absolute;
+  top: -4px;
+  width: 3px;
+  height: 18px;
+  background: var(--text);
+  border-radius: 2px;
+  left: 0%;
+  transition: left 0.3s ease;
+}
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* ---------- Depth blocks (risks, limitations, classification tables) ---------- */
+.depth-blocks { max-width: var(--max-w); margin-top: 8px; }
+.depth-blocks h2 { font-size: 1.15rem; }
+.depth-list { padding-left: 20px; }
+.depth-list li { margin-bottom: 8px; color: var(--text); }
 
 /* ---------- Footer ---------- */
 footer.site-footer {
