@@ -298,6 +298,18 @@ main.tool-page {
   color: var(--result);
   letter-spacing: 0.01em;
 }
+.result-box .result-category {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.result-box .result-range {
+  font-size: 0.85rem;
+  color: #A9B8B0;
+  margin-top: 8px;
+  font-family: 'Inter', sans-serif;
+}
 .result-box .result-sub {
   font-size: 0.85rem;
   color: #8CA69B;

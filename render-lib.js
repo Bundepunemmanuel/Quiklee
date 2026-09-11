@@ -127,7 +127,11 @@ function buildToolContentHTML(entry, allData, sectionPath) {
       html += "</div>";
     });
     html += '<button type="submit" class="btn-calc">Calculate</button>';
-    html += '<div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div>';
+    if (entry.gauge) {
+      html += '<div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-category" id="result-category"></div><div class="result-range" id="result-range"></div><div class="result-sub" id="result-sub"></div></div>';
+    } else {
+      html += '<div class="result-box" id="result-box"><div class="result-main" id="result-main"></div><div class="result-sub" id="result-sub"></div></div>';
+    }
     if (entry.gauge) html += buildGaugeHTML(entry.gauge);
     html += "</form></div>";
   } else if (entry.type === "info") {
