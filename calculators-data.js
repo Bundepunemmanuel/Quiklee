@@ -28,7 +28,7 @@ const calculatorsData = [
     metaDescription: "Calculate your Body Mass Index instantly using metric or imperial units, with an explanation of what your result means.",
     h1: "BMI Calculator",
     hook: "A 175cm, 70kg adult has a BMI of 22.9 — inside the healthy 18.5–24.9 range.",
-    intro: "Enter your height and weight to get your BMI instantly. Switch units below — this version works with either metric or imperial.",
+    intro: "Enter your height and weight for a BMI calculator built for adults, instantly. Switch units below — this version works with either metric or imperial.",
     type: "form",
     formula: "bmi-universal",
     gauge: BMI_GAUGE,
@@ -42,7 +42,8 @@ const calculatorsData = [
     ],
     explainer: [
       "BMI divides your weight by the square of your height. It's a quick screening number, not a diagnosis — it doesn't know how much of your weight is muscle versus fat, and it treats a bodybuilder and a sedentary person of the same height and weight identically. See [[how-to-calculate-bmi-manually|the full formula worked by hand]] if you want to check the math yourself.",
-      "If your result looks off for your body type, the [[bmi-calculator-for-bodybuilders|bodybuilder]], [[bmi-calculator-for-athletes|athlete]], or [[bmi-calculator-waist-circumference|waist-circumference]] versions below account for that."
+      "The formula also doesn't factor in age or gender directly — a 25-year-old man and a 65-year-old woman with an identical BMI land in the same category, even though clinicians increasingly read BMI by age and gender separately. That's exactly why the women-over-40, men-over-50, and stones-and-pounds versions below exist, rather than one generic calculator trying to fit everyone.",
+      "If your result looks off for your body type, the [[bmi-calculator-for-bodybuilders|bodybuilder]], [[bmi-calculator-for-athletes|athlete]], or [[bmi-calculator-waist-circumference|waist-circumference]] versions below account for that. And if you're weighing this BMI calculator vs body fat percentage as the better number to track, they're measuring different things entirely — BMI is weight-for-height, body fat percentage is actual tissue composition — see the [[body-fat-percentage-calculator|body fat calculator]] for that comparison directly."
     ],
     caveat: "BMI was designed as a population-level statistic in the 1830s, not an individual diagnostic tool. Use it as one data point, not the whole picture.",
     depthBlocks: [
