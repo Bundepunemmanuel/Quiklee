@@ -471,7 +471,7 @@ const calculatorsData = [
     titleHook: "What Doctors Use as Reference",
     metaDescription: "Estimate your ideal body weight from height and gender using the Devine formula, with an explanation of what it does and doesn't account for.",
     h1: "Ideal Weight Calculator",
-    hook: "A 175cm man's Devine-formula ideal weight is about 71.5kg — a reference point, not a strict target.",
+    hook: "A 175cm man's Devine-formula ideal weight is about 70.5kg — a reference point, not a strict target.",
     intro: "Enter your height and gender to get an estimated ideal weight, using the Devine formula — the same one many hospitals use as a starting reference point, most often for medication dosing.",
     type: "form",
     formula: "ideal-weight",
@@ -487,9 +487,21 @@ const calculatorsData = [
       "Like [[bmi-calculator|BMI]], it doesn't know your frame size, muscle mass, or body composition — treat the result as a reference range, not a number to chase exactly. See [[lean-body-mass-calculator|lean body mass]] for a measure that accounts for your actual weight instead of just height."
     ],
     caveat: "This is a population-average estimate, not a personalized target — frame size, muscle mass, and individual health all matter more than hitting this exact number.",
+    depthBlocks: [
+      { type: "h2", text: "Four formulas, four different answers" },
+      { type: "p", text: "Devine isn't the only ideal-weight formula in clinical use — several others exist, and they genuinely disagree. For a 175cm man:" },
+      { type: "table", headers: ["Formula", "Year", "Result"], rows: [
+        ["Devine", "1974", "70.5 kg"],
+        ["Robinson", "1983", "68.9 kg"],
+        ["Miller", "1983", "68.7 kg"],
+        ["Hamwi", "1964", "72.0 kg"]
+      ]},
+      { type: "p", text: "A roughly 3kg spread across formulas, all for the same height — a reminder that 'ideal weight' was never meant to be a precise target, just a population-average reference point. Devine is used here because it's the most common in clinical dosing calculations today." }
+    ],
     faq: [
       { q: "What is my ideal weight?", a: "It depends on height and gender in the simplest formulas, though real 'ideal' weight also depends on frame size, muscle mass, and overall health — this calculator gives a population-average reference point, not a personalized target." },
-      { q: "How is ideal weight calculated?", a: "This calculator uses the Devine formula: for men, 50kg + 2.3kg per inch of height over 5 feet; for women, 45.5kg + 2.3kg per inch over 5 feet. It was originally designed for medical dosing calculations, not fitness goals." }
+      { q: "How is ideal weight calculated?", a: "This calculator uses the Devine formula: for men, 50kg + 2.3kg per inch of height over 5 feet; for women, 45.5kg + 2.3kg per inch over 5 feet. It was originally designed for medical dosing calculations, not fitness goals." },
+      { q: "Why do different ideal weight calculators give different answers?", a: "Because they're built from different formulas, developed in different decades from different population data. None of them is 'more correct' — they're all rough population averages, which is exactly why the result should be read as a reference range, not a precise target." }
     ],
     related: ["bmi-calculator", "lean-body-mass-calculator", "body-fat-percentage-calculator"]
   },
@@ -520,9 +532,22 @@ const calculatorsData = [
       "For the most accurate reading, measure waist at the navel and neck just below the larynx, keeping the tape snug but not compressing the skin."
     ],
     caveat: "This is an estimate, not a clinical measurement — for a precise reading, a DEXA scan or hydrostatic weighing is the gold standard.",
+    depthBlocks: [
+      { type: "h2", text: "Body fat percentage categories" },
+      { type: "p", text: "Standard classification ranges used by the American Council on Exercise, by gender:" },
+      { type: "table", headers: ["Category", "Men", "Women"], rows: [
+        ["Essential fat", "2–5%", "10–13%"],
+        ["Athletes", "6–13%", "14–20%"],
+        ["Fitness", "14–17%", "21–24%"],
+        ["Average", "18–24%", "25–31%"],
+        ["Obese", "25%+", "32%+"]
+      ]},
+      { type: "p", text: "These bands are broader than BMI's, on purpose — body fat percentage naturally varies more by age, genetics, and training history than a single 'healthy' number could capture accurately." }
+    ],
     faq: [
       { q: "How is body fat percentage calculated?", a: "This calculator uses the US Navy method, based on waist, neck, and height measurements (plus hip for women). It's a formula derived from population data, accurate to within a few percentage points of a DEXA scan for most people." },
-      { q: "What is a healthy body fat percentage?", a: "Roughly 10–20% for men and 18–28% for women is considered a healthy, non-athletic range, though 'healthy' varies by age and individual — athletes often run lower than these ranges." }
+      { q: "What is a healthy body fat percentage?", a: "Roughly 10–20% for men and 18–28% for women is considered a healthy, non-athletic range, though 'healthy' varies by age and individual — athletes often run lower than these ranges." },
+      { q: "Is the Navy method accurate for very lean or very heavy people?", a: "It tends to be less reliable at the extremes — very lean, highly muscular people and people with very high body fat both see larger errors than the typical ±3-4% margin. A DEXA scan is more reliable outside the average range." }
     ],
     related: ["bmi-calculator-for-bodybuilders", "lean-body-mass-calculator", "ideal-weight-calculator"]
   },
@@ -551,9 +576,20 @@ const calculatorsData = [
       "Lean body mass includes muscle, bone, organs, and water — everything in your body that isn't fat tissue."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "What to do with your lean mass number" },
+      { type: "p", text: "The most common practical use of lean body mass is setting protein intake — sports nutrition guidance typically scales protein to lean mass rather than total body weight, since fat tissue doesn't need the same protein support muscle does:" },
+      { type: "table", headers: ["Goal", "Protein per kg of lean mass"], rows: [
+        ["General health", "1.2 – 1.6 g"],
+        ["Muscle maintenance", "1.6 – 2.0 g"],
+        ["Muscle building", "2.0 – 2.4 g"]
+      ]},
+      { type: "p", text: "For the 65.5kg lean mass example above, that's roughly 105–130g of protein daily for general muscle-building goals — noticeably more precise than the flat 'grams per pound of bodyweight' rule most people default to." }
+    ],
     faq: [
       { q: "What is lean body mass?", a: "It's your total body weight minus fat mass — so muscle, bone, organs, and water combined. It's often used as a reference point for setting protein intake or tracking strength-training progress." },
-      { q: "How is lean body mass calculated?", a: "This calculator uses the Boer formula, a widely-used estimate based on weight, height, and gender. For a more precise number, a DEXA scan or bioelectrical impedance scale measures it directly rather than estimating." }
+      { q: "How is lean body mass calculated?", a: "This calculator uses the Boer formula, a widely-used estimate based on weight, height, and gender. For a more precise number, a DEXA scan or bioelectrical impedance scale measures it directly rather than estimating." },
+      { q: "How much protein should I eat based on lean body mass?", a: "A common range in sports nutrition guidance is 1.6–2.4g of protein per kg of lean mass daily, depending on training goals — higher for muscle building, lower for general maintenance. This is general guidance, not individualized dietary advice." }
     ],
     related: ["body-fat-percentage-calculator", "ideal-weight-calculator", "bmi-calculator-for-bodybuilders"]
   },
