@@ -111,6 +111,22 @@ const calculatorsData = [
       "If you're used to stones and pounds instead, use the [[bmi-calculator-stones-pounds|imperial version]] linked below rather than converting by hand."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Healthy weight by height (quick reference)" },
+      { type: "p", text: "If you'd rather look up a range than run the calculator, here's the healthy-BMI weight range (18.5–24.9) for common heights:" },
+      { type: "table", headers: ["Height", "Healthy weight range"], rows: [
+        ["150 cm", "41.6 – 56.0 kg"],
+        ["155 cm", "44.4 – 59.8 kg"],
+        ["160 cm", "47.4 – 63.7 kg"],
+        ["165 cm", "50.4 – 67.8 kg"],
+        ["170 cm", "53.5 – 72.0 kg"],
+        ["175 cm", "56.7 – 76.3 kg"],
+        ["180 cm", "59.9 – 80.7 kg"],
+        ["185 cm", "63.3 – 85.2 kg"],
+        ["190 cm", "66.8 – 89.9 kg"]
+      ]},
+      { type: "p", text: "These are population-average ranges, not individual targets — muscle mass, frame size, and age all shift where a healthy weight actually falls for a given person." }
+    ],
     faq: [
       { q: "Is BMI calculated differently in kg and cm?", a: "No — the formula is identical to the imperial one, just without needing a conversion step. Weight in kg divided by height in metres, squared." },
       { q: "What's a healthy BMI in kg and cm?", a: "The same 18.5–24.9 range applies regardless of which units you use to get there — BMI is a unitless ratio once calculated." }
@@ -144,6 +160,16 @@ const calculatorsData = [
       "For competitive and serious lifters, [[body-fat-percentage-calculator|a body-fat percentage estimate]] tells you far more than BMI ever will. Treat the number below as a formality, not feedback."
     ],
     caveat: "If your BMI reads 'overweight' or 'obese' but you can see visible muscle separation and low body fat, trust the mirror and a body-fat estimate over this number.",
+    depthBlocks: [
+      { type: "h2", text: "The same weight, three different verdicts" },
+      { type: "p", text: "BMI can't see body composition — only the scale number matters to the formula. Here's how three people at 178cm and roughly the same BMI reading actually compare:" },
+      { type: "table", headers: ["Profile", "Weight", "BMI reads as", "Actual body fat"], rows: [
+        ["Competitive bodybuilder", "95 kg", "Obese (30.0)", "~8%"],
+        ["Sedentary, untrained", "93 kg", "Obese (29.4)", "~28%"],
+        ["Average fitness level", "78 kg", "Healthy (24.6)", "~18%"]
+      ]},
+      { type: "p", text: "The bodybuilder and the sedentary person land in nearly the same BMI category despite one carrying triple the body fat of the other — which is exactly the scenario BMI was never built to distinguish." }
+    ],
     faq: [
       { q: "Why is bodybuilder BMI always high?", a: "Because BMI can't distinguish muscle from fat — it only measures total weight against height. A pound of muscle takes up less space than a pound of fat but weighs the same, so a very muscular person weighs more per inch of height than the population average BMI was built on." },
       { q: "What should bodybuilders use instead of BMI?", a: "A body-fat percentage estimate (calipers, a Navy-method calculation, or a DEXA scan) gives a far more useful number for anyone with significant muscle mass. Try the body fat percentage calculator linked below." }
@@ -177,6 +203,18 @@ const calculatorsData = [
       "Sports scientists generally use skinfold measurements, bioelectrical impedance, or DEXA scans instead of BMI when tracking athlete body composition — see [[body-fat-percentage-calculator|the body fat percentage calculator]] for a rough version of that approach."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Typical BMI by sport (elite athletes)" },
+      { type: "p", text: "Published sports-science data shows BMI varies widely by discipline, even among elite, low-body-fat athletes — a reminder that 'high BMI' alone says nothing about fitness or fat levels:" },
+      { type: "table", headers: ["Sport", "Typical BMI range"], rows: [
+        ["Marathon running", "18.5 – 21"],
+        ["Sprinting", "22 – 25"],
+        ["Swimming", "22 – 25"],
+        ["Rugby (forwards)", "28 – 32"],
+        ["Powerlifting / strongman", "28 – 35+"]
+      ]},
+      { type: "p", text: "A rugby forward and a marathon runner can both be at the top of their sport's fitness level while sitting on opposite ends of the BMI scale — the difference is muscle mass and sport-specific build, not health." }
+    ],
     faq: [
       { q: "Why do athletes have high BMI?", a: "Muscle weighs more than fat for the same volume, so athletes with significant muscle mass weigh more per inch of height than a sedentary person of the same height — even at very low body fat." },
       { q: "Does BMI matter for athletic performance?", a: "Not directly — BMI is a general population health screening number, not a performance or fitness measure. Coaches and sports scientists use body composition and performance testing instead." }
@@ -248,6 +286,17 @@ const calculatorsData = [
       "Tracking [[bmi-calculator-waist-circumference|waist circumference alongside BMI]] becomes more informative after 40, since abdominal fat redistribution is common during this stage regardless of total weight change."
     ],
     caveat: "This tool gives context, not medical advice — if you're navigating perimenopause-related weight changes, a doctor or registered dietitian can give guidance specific to your situation.",
+    depthBlocks: [
+      { type: "h2", text: "Body composition by decade (typical, not universal)" },
+      { type: "p", text: "Research on aging and body composition shows a consistent pattern of gradual muscle loss and fat redistribution, even when total weight stays flat:" },
+      { type: "table", headers: ["Age range", "Typical shift"], rows: [
+        ["30s", "Muscle mass roughly stable; earliest hormonal shifts if perimenopause begins"],
+        ["40s", "Muscle mass begins declining ~1% per year; fat increasingly shifts toward the abdomen"],
+        ["50s", "Muscle loss accelerates around menopause; waist circumference often rises independent of weight"],
+        ["60s+", "Continued muscle loss (sarcopenia); strength training becomes especially protective"]
+      ]},
+      { type: "p", text: "This is why two women at the identical BMI, 15 years apart, can have meaningfully different body composition and health risk — the number alone doesn't capture the shift." }
+    ],
     faq: [
       { q: "What is a healthy BMI for women?", a: "The standard 18.5–24.9 range applies to women the same as men — BMI's formula doesn't factor in sex, though body composition at a given BMI often differs between men and women." },
       { q: "Does BMI change after 40?", a: "The formula and categories stay the same, but body composition often shifts — less muscle, more abdominal fat — even at a stable weight. That's why the same BMI number can mean something different at 25 versus 45." }
@@ -281,6 +330,17 @@ const calculatorsData = [
       "Grip strength and [[bmi-calculator-waist-circumference|waist circumference]] are two simple measures doctors increasingly pair with BMI for this age group, since neither is fooled by a stable number on the scale."
     ],
     caveat: "This tool gives context, not medical advice — for guidance specific to your health history, talk to a doctor.",
+    depthBlocks: [
+      { type: "h2", text: "Muscle loss by decade in men" },
+      { type: "p", text: "Sarcopenia (age-related muscle loss) follows a fairly consistent pattern in research, and it can happen even while weight — and BMI — stays flat:" },
+      { type: "table", headers: ["Age range", "Typical shift"], rows: [
+        ["30s–40s", "Muscle mass loss begins, often under 1% per year — usually unnoticed"],
+        ["50s", "Loss accelerates to roughly 1–2% per year without resistance training"],
+        ["60s", "Continued loss; grip strength and functional strength often decline noticeably"],
+        ["70s+", "Loss can reach 15% or more of peak muscle mass without intervention"]
+      ]},
+      { type: "p", text: "Strength training is the most consistently effective way to slow this pattern — and it's also why two men can share the same BMI at very different actual fitness and strength levels." }
+    ],
     faq: [
       { q: "What is a healthy BMI for men over 50?", a: "The standard 18.5–24.9 range still applies, though some clinicians give slightly more latitude in the upper end of 'healthy' for older adults, since a small BMI increase with age is common and not automatically harmful." },
       { q: "Why does muscle loss matter if my weight is stable?", a: "Because BMI can't tell the difference — a man who loses 5kg of muscle and gains 5kg of fat shows an unchanged BMI, despite a meaningfully worse body composition." }
@@ -311,6 +371,22 @@ const calculatorsData = [
       "If you'd rather work in kilograms and centimetres directly, the [[bmi-calculator-kg-cm|metric version]] is linked below."
     ],
     caveat: null,
+    depthBlocks: [
+      { type: "h2", text: "Healthy weight by height (quick reference)" },
+      { type: "p", text: "The healthy-BMI weight range (18.5–24.9) for common UK/Irish heights, in stones and pounds:" },
+      { type: "table", headers: ["Height", "Healthy weight range"], rows: [
+        ["4'10\"", "6st 5lb – 8st 7lb"],
+        ["5'0\"", "6st 11lb – 9st 2lb"],
+        ["5'2\"", "7st 3lb – 9st 10lb"],
+        ["5'4\"", "7st 10lb – 10st 5lb"],
+        ["5'6\"", "8st 3lb – 11st 0lb"],
+        ["5'8\"", "8st 10lb – 11st 10lb"],
+        ["5'10\"", "9st 3lb – 12st 6lb"],
+        ["6'0\"", "9st 10lb – 13st 2lb"],
+        ["6'2\"", "10st 4lb – 13st 12lb"]
+      ]},
+      { type: "p", text: "The NHS uses this same 18.5–24.9 healthy range regardless of whether weight is entered in stones or kilograms — the classification itself doesn't change with units." }
+    ],
     faq: [
       { q: "How do I calculate BMI in stones and pounds?", a: "Convert stones and pounds to kilograms first (1 stone = 6.35kg), then use the standard metric BMI formula — or just enter your weight directly above and skip the manual conversion." }
     ],
