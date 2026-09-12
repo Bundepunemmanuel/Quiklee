@@ -1,12 +1,17 @@
-/* Quiklee — meanings data */
+/* Quiklee — meanings data
+   Each entry generates one real static file at /meanings/[slug].html
+   Adds hook, titleHook, faq (new fields for this section) — content/depth stays in the existing 'content' array.
+*/
 const meaningsData = [
   {
     slug: "lol-meaning-texting-vs-slack",
     cluster: "internet-terms",
     clusterLabel: "Meanings",
     title: "LOL Meaning — Texting vs. Slack/Work Chat",
+    titleHook: "It Depends Where",
     metaDescription: "What LOL means in casual texting versus professional chat like Slack, where its tone shifts.",
     h1: "LOL Meaning — Texting vs. Work Chat",
+    hook: "LOL rarely means someone's actually laughing — where you see it changes what it's really doing.",
     intro: "LOL stands for 'laughing out loud' — but what it signals changes a lot depending on where you see it.",
     type: "info",
     content: [
@@ -23,6 +28,11 @@ const meaningsData = [
       ]}
     ],
     caveat: null,
+    faq: [
+      { q: "What does lol mean in a work chat?", a: "Usually not amusement — it's softening the tone of a request or comment so it doesn't read as blunt or annoyed, even when nothing funny is happening." },
+      { q: "Is lol sarcastic sometimes?", a: "Yes — a flat or short \"lol\" (especially with a period, \"lol.\") can read as unimpressed or sarcastic rather than amused, depending on the rest of the message and who's sending it." },
+      { q: "What does lol mean at the end of a sentence?", a: "At the end of a sentence it's most often softening or downplaying what was just said, rather than marking something as funny — similar to trailing off with a half-smile in speech." }
+    ],
     related: ["iykyk-meaning", "fyi-meaning"]
   },
   {
@@ -30,8 +40,10 @@ const meaningsData = [
     cluster: "internet-terms",
     clusterLabel: "Meanings",
     title: "IYKYK Meaning",
+    titleHook: "The Point Is Not Explaining",
     metaDescription: "What IYKYK stands for and how it's used, with real usage examples.",
     h1: "IYKYK Meaning",
+    hook: "IYKYK means the sender isn't going to explain the joke — that's the whole point of using it.",
     intro: "IYKYK stands for \"if you know, you know\" — used to reference something only a specific group will fully get, without explaining it to everyone else.",
     type: "info",
     content: [
@@ -45,6 +57,11 @@ const meaningsData = [
       { type: "p", text: "It's most common as a caption or comment rather than mid-sentence, and pairs naturally with an emoji rather than punctuation." }
     ],
     caveat: null,
+    faq: [
+      { q: "What does IYKYK stand for?", a: "\"If you know, you know\" — a way of referencing something without spelling it out for people outside the relevant group or context." },
+      { q: "Is IYKYK rude?", a: "Not inherently — it's understood as intentionally exclusive rather than accidentally confusing, similar to an inside joke. It can come across as cliquish depending on tone and audience, but it's not considered rude in casual use." },
+      { q: "When should I use iykyk?", a: "As a caption or short comment referencing something a specific group will recognize — a shared event, a regional thing, an old joke — not as an explanation itself, since spelling it out afterward defeats the purpose." }
+    ],
     related: ["lol-meaning-texting-vs-slack", "fyi-meaning"]
   },
   {
@@ -52,8 +69,10 @@ const meaningsData = [
     cluster: "tech-terms",
     clusterLabel: "Meanings",
     title: "GPT Meaning",
+    titleHook: "Three Words, Broken Down",
     metaDescription: "What GPT stands for in AI, and what it actually refers to technically.",
     h1: "GPT Meaning",
+    hook: "GPT stands for Generative Pre-trained Transformer — three words, three distinct real jobs.",
     intro: "GPT stands for Generative Pre-trained Transformer — the architecture behind models like ChatGPT.",
     type: "info",
     content: [
@@ -63,6 +82,11 @@ const meaningsData = [
       { type: "p", text: "In everyday conversation now, 'GPT' almost always refers to the AI model family rather than the disk format, given how much more common the AI usage has become." }
     ],
     caveat: null,
+    faq: [
+      { q: "What does GPT stand for?", a: "Generative Pre-trained Transformer — referring to how the model generates text, was pre-trained on a large body of text first, and uses the Transformer neural network architecture." },
+      { q: "Does GPT mean the same as ChatGPT?", a: "No — GPT is the underlying model architecture and family; ChatGPT is a specific product built on top of a GPT model, with additional fine-tuning and a chat interface layered on." },
+      { q: "What is a transformer in AI?", a: "A neural network architecture, introduced in a 2017 research paper, that processes text by weighing the relevance of different words to each other — it's the technical foundation that made modern large language models practical." }
+    ],
     related: ["nft-meaning-for-beginners"]
   },
   {
@@ -70,8 +94,10 @@ const meaningsData = [
     cluster: "tech-terms",
     clusterLabel: "Meanings",
     title: "NFT Meaning for Beginners",
+    titleHook: "Simpler Than It Sounds",
     metaDescription: "A jargon-free explanation of what NFT stands for and what it actually is.",
     h1: "NFT Meaning for Beginners",
+    hook: "An NFT usually doesn't contain the actual artwork — just a record of who owns it.",
     intro: "NFT stands for Non-Fungible Token — a way of recording on a blockchain that one specific person owns one specific digital item.",
     type: "info",
     content: [
@@ -81,6 +107,11 @@ const meaningsData = [
       { type: "p", text: "Mostly digital art and collectibles, but also event tickets, in-game items, and proof of membership — anything where 'exactly one specific instance of this exists, and here's who owns it' is the useful part." }
     ],
     caveat: null,
+    faq: [
+      { q: "What does NFT stand for?", a: "Non-Fungible Token — a blockchain record establishing that one specific person owns one specific unique digital item." },
+      { q: "What can NFTs be used for besides art?", a: "Event tickets, in-game items, proof of membership, and any situation where verifying unique ownership of a specific digital item is useful — art and collectibles are just the most well-known use case." },
+      { q: "Does owning an NFT mean I own the copyright to the image?", a: "Not automatically — owning the token generally means owning that specific record on the blockchain, not necessarily the copyright or reproduction rights to the underlying artwork, unless the seller explicitly transfers those rights too." }
+    ],
     related: ["gpt-meaning"]
   },
   {
@@ -88,8 +119,10 @@ const meaningsData = [
     cluster: "acronyms",
     clusterLabel: "Meanings",
     title: "FYI Meaning",
+    titleHook: "No Reply Needed",
     metaDescription: "What FYI stands for and how it's typically used in messages and email.",
     h1: "FYI Meaning",
+    hook: "FYI signals no response is needed — that's what separates it from a request.",
     intro: "FYI stands for \"for your information\" — used to flag something the recipient should know, without requiring them to act on it.",
     type: "info",
     content: [
@@ -98,6 +131,11 @@ const meaningsData = [
       { type: "p", text: "\"FYI, the meeting moved to 3pm\" — informs without asking anything of the reader, unlike \"can we move the meeting to 3pm?\" which needs a reply." }
     ],
     caveat: null,
+    faq: [
+      { q: "What does FYI stand for?", a: "\"For your information\" — used to share something the recipient should know without asking them to respond or take action." },
+      { q: "Is FYI rude in an email?", a: "Not inherently, but it can read as curt if used alone with no other context, especially forwarding something with just \"FYI\" and nothing else. Adding a brief note softens it in more formal settings." },
+      { q: "What's the difference between FYI and FYSA?", a: "They mean nearly the same thing — FYSA (\"for your situational awareness\") is more common in military and some corporate contexts, while FYI is the everyday, general-purpose version." }
+    ],
     related: ["lol-meaning-texting-vs-slack", "iykyk-meaning"]
   }
 ];

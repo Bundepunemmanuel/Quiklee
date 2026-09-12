@@ -44,12 +44,12 @@ function buildHubListHTML(dataArray, sectionPath) {
 /* Renders the depth-block content (risks, limitations, classification tables, etc.)
    using the same h2/p/table/steps pattern as info-type pages — but attachable to
    any tool page, form or info, wherever real added depth is warranted. */
-function buildDepthBlocksHTML(blocks, sectionPath) {
+function buildDepthBlocksHTML(blocks, sectionPath, slugMap) {
   if (!blocks || !blocks.length) return "";
   var html = '<div class="depth-blocks">';
   blocks.forEach(function (block) {
     if (block.type === "h2") html += "<h2>" + esc(block.text) + "</h2>";
-    else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath) + "</p>";
+    else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath, slugMap) + "</p>";
     else if (block.type === "steps") {
       html += "<ol class='steps'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ol>";
     } else if (block.type === "list") {
@@ -95,16 +95,22 @@ function findEntry(dataArray, slug) {
   return null;
 }
 
-/* Turns explainer paragraphs into HTML, auto-linking any [[slug|label]] markers
-   the data file uses for natural, in-body contextual links (not a forced link dump). */
-function linkifyExplainer(text, sectionPath) {
+/* Turns explainer paragraphs into HTML, auto-linking any [[slug|label]] markers.
+   slugMap (slug -> sectionPath) resolves the CORRECT folder even when the link
+   points to a different section than the current page (e.g. a converter linking
+   to a calculator) — falls back to the current page's own sectionPath if the
+   slug isn't found in the map (keeps old calls working without a map). */
+function linkifyExplainer(text, sectionPath, slugMap) {
   return esc(text).replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, function (_, slug, label) {
-    return '<a href="' + urlFor(sectionPath, slug) + '">' + esc(label) + "</a>";
+    var resolvedPath = (slugMap && slugMap[slug] !== undefined) ? slugMap[slug] : sectionPath;
+    return '<a href="' + urlFor(resolvedPath, slug) + '">' + esc(label) + "</a>";
   });
 }
 
-/* Builds the inner <div id="tool-root"> content for one tool page */
-function buildToolContentHTML(entry, allData, sectionPath) {
+/* Builds the inner <div id="tool-root"> content for one tool page.
+   slugMap (optional, slug -> sectionPath) is used to resolve related-link and
+   in-body-link URLs correctly across sections, not just within the current one. */
+function buildToolContentHTML(entry, allData, sectionPath, slugMap) {
   var html = "";
   html += "<h1>" + esc(entry.h1) + "</h1>";
 
@@ -138,7 +144,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
     html += '<div class="tool-card">';
     entry.content.forEach(function (block) {
       if (block.type === "h2") html += "<h2>" + esc(block.text) + "</h2>";
-      else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath) + "</p>";
+      else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath, slugMap) + "</p>";
       else if (block.type === "steps") {
         html += "<ol class='steps'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ol>";
       } else if (block.type === "table") {
@@ -154,7 +160,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
 
   if (entry.type === "form" && entry.explainer && entry.explainer.length) {
     html += '<div class="explainer"><h2>How this works</h2>';
-    entry.explainer.forEach(function (p) { html += "<p>" + linkifyExplainer(p, sectionPath) + "</p>"; });
+    entry.explainer.forEach(function (p) { html += "<p>" + linkifyExplainer(p, sectionPath, slugMap) + "</p>"; });
     if (entry.caveat) html += '<div class="caveat">' + esc(entry.caveat) + "</div>";
     html += "</div>";
   } else if (entry.caveat) {
@@ -162,7 +168,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
   }
 
   if (entry.depthBlocks && entry.depthBlocks.length) {
-    html += buildDepthBlocksHTML(entry.depthBlocks, sectionPath);
+    html += buildDepthBlocksHTML(entry.depthBlocks, sectionPath, slugMap);
   }
 
   if (entry.faq && entry.faq.length) {
@@ -173,7 +179,8 @@ function buildToolContentHTML(entry, allData, sectionPath) {
     html += '<div class="related"><h2>Related tools</h2><div class="related-list">';
     entry.related.forEach(function (slug) {
       var rel = findEntry(allData, slug);
-      if (rel) html += '<a href="' + urlFor(sectionPath, rel.slug) + '">' + esc(rel.title) + "</a>";
+      var resolvedPath = (slugMap && slugMap[slug] !== undefined) ? slugMap[slug] : sectionPath;
+      if (rel) html += '<a href="' + urlFor(resolvedPath, rel.slug) + '">' + esc(rel.title) + "</a>";
     });
     html += "</div></div>";
   }
