@@ -607,7 +607,7 @@ const calculatorsData = [
     metaDescription: "Find what percentage one number is of another, or find a percentage of a number, instantly.",
     h1: "Percentage Calculator",
     hook: "45 is 25% of 180 — enter any two numbers to get the exact percentage.",
-    intro: "General-purpose percentage calculator — enter the part and the whole to find what percentage one is of the other.",
+    intro: "General-purpose percentage calculator — enter the part and the whole to find what percentage X is of Y, or flip it to find a percentage of a number instead.",
     type: "form",
     formula: "percentage-basic",
     fields: [
@@ -654,7 +654,7 @@ const calculatorsData = [
       { id: "discount", label: "Discount (%)", type: "number", placeholder: "30" }
     ],
     explainer: [
-      "Amount saved is price × (discount ÷ 100); the sale price is what's left after subtracting that from the original price. A 30% discount on $89.99 saves $27.00, landing at $62.99.",
+      "Amount saved is price × (discount ÷ 100); the sale price is what's left after subtracting that from the original price. A 30% discount on $89.99 saves $27.00, landing at $62.99 — the same math whether you think of this as a discount calculator or a percent off calculator, since both terms describe the same thing.",
       "For stacked discounts (like an extra 20% off an already-reduced price), run the sale price back through this calculator a second time — stacked percentages don't add together directly."
     ],
     caveat: null,
@@ -691,7 +691,7 @@ const calculatorsData = [
       { id: "newSalary", label: "New salary", type: "number", placeholder: "68000" }
     ],
     explainer: [
-      "Percentage increase is (new − old) ÷ old × 100. Going from $62,000 to $68,000 is a $6,000 raise, or about 9.7% — not a round number, which is exactly why it's worth checking rather than estimating.",
+      "Percentage increase is (new − old) ÷ old × 100. Going from $62,000 to $68,000 is a $6,000 raise, or about 9.7% — not a round number, which is exactly why it's worth checking rather than estimating. This works equally well as a salary increase calculator if that's the phrase you started with — same math, same result either way.",
       "This calculates gross pay, before tax — your actual take-home increase will be smaller once tax withholding adjusts. If an offer states the percentage but not the dollar amount (or vice versa), this works in reverse too."
     ],
     caveat: "Results are gross (pre-tax) figures — your net take-home increase will be smaller once tax withholding is applied.",
@@ -884,7 +884,7 @@ const calculatorsData = [
       { id: "people", label: "Number of people", type: "number", placeholder: "1" }
     ],
     explainer: [
-      "Tip is calculated as bill × (tip percent ÷ 100). If you're splitting the table, the total (bill + tip) is then divided evenly by the number of people — see [[tip-calculator-split-bill|the dedicated split-bill version]] if you want rounded, clean per-person amounts.",
+      "Tip is calculated as bill × (tip percent ÷ 100). This works as a restaurant tip calculator or a general-purpose one for any service — if you're splitting the table, the total (bill + tip) is then divided evenly by the number of people, functioning as a bill splitter too. See [[tip-calculator-split-bill|the dedicated split-bill version]] if you want rounded, clean per-person amounts.",
       "18–20% is the typical range for good sit-down service in the US; 10-15% is more standard in the UK and much of Europe, where service is often already included."
     ],
     caveat: null,
@@ -932,7 +932,7 @@ const calculatorsData = [
       ]}
     ],
     explainer: [
-      "Rounding each person's share up (rather than down) means the group slightly overpays the tip — which most servers won't mind, and it saves the group from awkward exact-change math at the table.",
+      "Rounding each person's share up (rather than down) means the group slightly overpays the tip — which most servers won't mind, and it saves the group from awkward exact-change math at the table. This works as a straightforward bill splitter for any group size, not just even numbers of people.",
       "For an uneven split where people ordered very different amounts, this tool assumes an even split — for itemized splitting, each person's actual order needs to be tallied separately."
     ],
     caveat: null,
@@ -974,7 +974,7 @@ const calculatorsData = [
       { id: "tipPercent", label: "Tip percentage", type: "number", placeholder: "20" }
     ],
     explainer: [
-      "The receipt's tax line is usually printed separately from the subtotal — enter that tax figure here and the tool subtracts it before applying your tip percentage.",
+      "The receipt's tax line is usually printed separately from the subtotal — enter that tax figure here and the tool subtracts it before applying your tip percentage. This is effectively a tax and tip calculator in one, splitting out the two figures automatically instead of leaving you to do that subtraction by hand.",
       "The difference is usually small (a percent or two of the tip amount) but it's the technically correct way to calculate a tip, since the server didn't provide the tax."
     ],
     caveat: null,

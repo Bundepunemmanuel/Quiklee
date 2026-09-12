@@ -20,13 +20,13 @@
   function buildSearchIndex() {
     var all = [];
     if (typeof calculatorsData !== "undefined") {
-      calculatorsData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Calculator" }); });
+      calculatorsData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Calculator", path: "calculators" }); });
     }
     if (typeof convertersData !== "undefined") {
-      convertersData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Converter" }); });
+      convertersData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Converter", path: "" }); });
     }
     if (typeof meaningsData !== "undefined") {
-      meaningsData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Meaning" }); });
+      meaningsData.forEach(function (e) { all.push({ slug: e.slug, title: e.title, cat: "Meaning", path: "" }); });
     }
     return all;
   }
@@ -47,7 +47,8 @@
         return;
       }
       resultsEl.innerHTML = matches.map(function (m) {
-        return '<a href="/' + m.slug + '">' + esc(m.title) + '<span class="cat-tag">' + m.cat + '</span></a>';
+        var url = m.path ? "/" + m.path + "/" + m.slug : "/" + m.slug;
+        return '<a href="' + url + '">' + esc(m.title) + '<span class="cat-tag">' + m.cat + '</span></a>';
       }).join("");
       resultsEl.classList.add("show");
     }
@@ -71,6 +72,21 @@
   function bmiGaugePercent(bmi) {
     var pct = ((bmi - 15) / (40 - 15)) * 100;
     return Math.max(2, Math.min(98, pct));
+  }
+
+  function bodyFatCategory(bf, gender) {
+    if (gender === "male") {
+      if (bf < 6) return "Essential fat";
+      if (bf < 14) return "Athletes";
+      if (bf < 18) return "Fitness";
+      if (bf < 25) return "Average";
+      return "Obese";
+    }
+    if (bf < 14) return "Essential fat";
+    if (bf < 21) return "Athletes";
+    if (bf < 25) return "Fitness";
+    if (bf < 32) return "Average";
+    return "Obese";
   }
 
   function bmiCategoryColor(bmi) {
@@ -232,7 +248,7 @@
           bf = 495 / (1.29579 - 0.35004 * Math.log10(v.waist + v.hip - v.neck) + 0.22100 * Math.log10(v.height)) - 450;
         }
         if (!isFinite(bf) || bf < 0) return { main: "Check your measurements", sub: "Waist must be larger than neck for this formula to work." };
-        return { main: bf.toFixed(1) + "% body fat", sub: "US Navy method estimate — accurate to roughly ±3-4% versus a DEXA scan" };
+        return { main: bf.toFixed(1) + "% body fat", sub: "Category: " + bodyFatCategory(bf, v.gender) + " — US Navy method, accurate to roughly ±3-4% versus a DEXA scan" };
       }
 
       case "lean-body-mass": {
@@ -241,7 +257,9 @@
           ? 0.407 * v.weight + 0.267 * v.height - 19.2
           : 0.252 * v.weight + 0.473 * v.height - 48.3;
         var fatMass = v.weight - lbm;
-        return { main: lbm.toFixed(1) + " kg lean mass", sub: "≈ " + fatMass.toFixed(1) + " kg fat mass, at a total weight of " + v.weight + " kg" };
+        var proteinLow = Math.round(lbm * 1.2);
+        var proteinHigh = Math.round(lbm * 2.4);
+        return { main: lbm.toFixed(1) + " kg lean mass", sub: "≈ " + fatMass.toFixed(1) + " kg fat mass. Suggested protein range: " + proteinLow + "–" + proteinHigh + "g/day (1.2–2.4g per kg lean mass, depending on goal)" };
       }
 
       case "percentage-increase": {

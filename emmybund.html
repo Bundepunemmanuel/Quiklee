@@ -60,6 +60,7 @@
       <button onclick="selectAll(true)">Select all</button>
       <button onclick="selectAll(false)">Select none</button>
       <button class="secondary" onclick="getPaa()" id="paa-btn">Get PAA for selected</button>
+      <button onclick="downloadJSON()">Download (long-tails so far)</button>
       <span class="credits" id="paa-credits"></span>
     </div>
     <div class="error" id="paa-error"></div>
@@ -71,7 +72,7 @@
 
   <div class="card" id="paa-results-card" style="display:none;">
     <div class="toolbar">
-      <button onclick="downloadJSON()">Download JSON</button>
+      <button onclick="downloadJSON()">Download JSON (long-tails + PAA)</button>
     </div>
     <table id="paa-table">
       <thead><tr><th>Keyword</th><th>Question / Answer</th></tr></thead>
@@ -193,7 +194,14 @@
   }
 
   function downloadJSON() {
-    const blob = new Blob([JSON.stringify(paaData, null, 2)], { type: "application/json" });
+    const seed = document.getElementById("seed").value.trim();
+    const payload = {
+      seed: seed,
+      longtailKeywords: currentKeywords,
+      paaResults: paaData,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
