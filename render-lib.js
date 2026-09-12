@@ -44,12 +44,12 @@ function buildHubListHTML(dataArray, sectionPath) {
 /* Renders the depth-block content (risks, limitations, classification tables, etc.)
    using the same h2/p/table/steps pattern as info-type pages — but attachable to
    any tool page, form or info, wherever real added depth is warranted. */
-function buildDepthBlocksHTML(blocks) {
+function buildDepthBlocksHTML(blocks, sectionPath) {
   if (!blocks || !blocks.length) return "";
   var html = '<div class="depth-blocks">';
   blocks.forEach(function (block) {
     if (block.type === "h2") html += "<h2>" + esc(block.text) + "</h2>";
-    else if (block.type === "p") html += "<p>" + esc(block.text) + "</p>";
+    else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath) + "</p>";
     else if (block.type === "steps") {
       html += "<ol class='steps'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ol>";
     } else if (block.type === "list") {
@@ -138,7 +138,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
     html += '<div class="tool-card">';
     entry.content.forEach(function (block) {
       if (block.type === "h2") html += "<h2>" + esc(block.text) + "</h2>";
-      else if (block.type === "p") html += "<p>" + esc(block.text) + "</p>";
+      else if (block.type === "p") html += "<p>" + linkifyExplainer(block.text, sectionPath) + "</p>";
       else if (block.type === "steps") {
         html += "<ol class='steps'>" + block.items.map(function (it) { return "<li>" + esc(it) + "</li>"; }).join("") + "</ol>";
       } else if (block.type === "table") {
@@ -162,7 +162,7 @@ function buildToolContentHTML(entry, allData, sectionPath) {
   }
 
   if (entry.depthBlocks && entry.depthBlocks.length) {
-    html += buildDepthBlocksHTML(entry.depthBlocks);
+    html += buildDepthBlocksHTML(entry.depthBlocks, sectionPath);
   }
 
   if (entry.faq && entry.faq.length) {

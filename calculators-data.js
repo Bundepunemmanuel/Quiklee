@@ -108,7 +108,7 @@ const calculatorsData = [
       { id: "height", label: "Height (cm)", type: "number", placeholder: "175" }
     ],
     explainer: [
-      "This is the plain metric version: kilograms and centimetres in, BMI out. Formula is weight (kg) ÷ height (m)², where height in cm is converted to metres automatically.",
+      "This is the plain metric version: kilograms and centimetres in, BMI out. Formula is weight (kg) ÷ height (m)², where height in cm is converted to metres automatically — a BMI calculator using kg and cm from start to finish, with no unit switching in between.",
       "If you're used to stones and pounds instead, use the [[bmi-calculator-stones-pounds|imperial version]] linked below rather than converting by hand."
     ],
     caveat: null,
@@ -157,7 +157,7 @@ const calculatorsData = [
       ]}
     ],
     explainer: [
-      "A male bodybuilder at 178cm and 95kg with 8% body fat will score 'obese' on the standard BMI scale — despite being leaner than almost anyone in the general population. That's the well-documented failure mode of applying a population-average formula to an outlier physique.",
+      "A male bodybuilder at 178cm and 95kg with 8% body fat will score 'obese' on the standard BMI scale — despite being leaner than almost anyone in the general population. That's the well-documented failure mode of applying a population-average formula to an outlier physique, and exactly why a BMI calculator taking muscle into account looks different from the plain version.",
       "For competitive and serious lifters, [[body-fat-percentage-calculator|a body-fat percentage estimate]] tells you far more than BMI ever will. Treat the number below as a formality, not feedback."
     ],
     caveat: "If your BMI reads 'overweight' or 'obese' but you can see visible muscle separation and low body fat, trust the mirror and a body-fat estimate over this number.",
@@ -201,7 +201,7 @@ const calculatorsData = [
     ],
     explainer: [
       "Power and strength athletes see the biggest gap between BMI and reality, since added muscle mass raises weight without adding fat. Endurance athletes tend to track closer to standard BMI ranges, since they typically carry less added muscle mass.",
-      "Sports scientists generally use skinfold measurements, bioelectrical impedance, or DEXA scans instead of BMI when tracking athlete body composition — see [[body-fat-percentage-calculator|the body fat percentage calculator]] for a rough version of that approach."
+      "Sports scientists generally use skinfold measurements, bioelectrical impedance, or DEXA scans instead of BMI when tracking athlete body composition. If you're comparing this BMI calculator with body fat percentage as the more informative number, see [[body-fat-percentage-calculator|the body fat percentage calculator]] for a rough version of that approach."
     ],
     caveat: null,
     depthBlocks: [
@@ -242,7 +242,7 @@ const calculatorsData = [
     ],
     explainer: [
       "Waist-to-height ratio is calculated as waist ÷ height. A ratio under 0.5 is generally considered a healthy range for most adults, regardless of overall BMI category — this is why two people with the same BMI can have very different health risk profiles.",
-      "Measure your waist at the narrowest point, usually just above the belly button, without pulling the tape measure tight."
+      "Measure your waist at the narrowest point, usually just above the belly button, without pulling the tape measure tight. A full BMI calculator with neck and waist measurements — like the one used for body fat estimates — adds even more detail, but waist alone already improves on BMI's blind spot around where weight is carried."
     ],
     caveat: "Waist-to-height ratio is a screening guide, not a diagnosis — it doesn't account for pregnancy, certain medical conditions, or body shapes where fat is carried elsewhere.",
     depthBlocks: [
@@ -283,7 +283,7 @@ const calculatorsData = [
       ]}
     ],
     explainer: [
-      "Some research suggests slightly higher BMI ranges may carry less added risk for women over 65 compared to younger adults, while the standard 18.5–24.9 'normal' band was calibrated mostly on younger populations.",
+      "Some research suggests slightly higher BMI ranges may carry less added risk for women over 65 compared to younger adults, while the standard 18.5–24.9 'normal' band was calibrated mostly on younger populations. This is one calculator built to work as a BMI calculator for women over 60 too, not just the 40s and 50s — the age selector above adjusts the framing accordingly.",
       "Tracking [[bmi-calculator-waist-circumference|waist circumference alongside BMI]] becomes more informative after 40, since abdominal fat redistribution is common during this stage regardless of total weight change."
     ],
     caveat: "This tool gives context, not medical advice — if you're navigating perimenopause-related weight changes, a doctor or registered dietitian can give guidance specific to your situation.",
@@ -327,7 +327,7 @@ const calculatorsData = [
       ]}
     ],
     explainer: [
-      "A stable BMI over decades can mask a real shift underneath — muscle replaced by fat at roughly the same weight, sometimes called 'normal weight obesity.' This is part of why strength training is recommended alongside weight management for men over 50, not just calorie tracking.",
+      "A stable BMI over decades can mask a real shift underneath — muscle replaced by fat at roughly the same weight, sometimes called 'normal weight obesity.' This is part of why strength training is recommended alongside weight management for men over 50, not just calorie tracking. The age selector above also makes this usable as a BMI calculator for men over 60 or into your 70s, since sarcopenia's effect on interpretation only grows with age.",
       "Grip strength and [[bmi-calculator-waist-circumference|waist circumference]] are two simple measures doctors increasingly pair with BMI for this age group, since neither is fooled by a stable number on the scale."
     ],
     caveat: "This tool gives context, not medical advice — for guidance specific to your health history, talk to a doctor.",
@@ -368,7 +368,7 @@ const calculatorsData = [
       { id: "inches", label: "Height — inches", type: "number", placeholder: "9" }
     ],
     explainer: [
-      "11 stone 4 lb converts to 71.7kg; 5'9\" converts to 175cm — the calculator handles both conversions internally so you can enter weight and height exactly as you'd say them out loud.",
+      "11 stone 4 lb converts to 71.7kg; 5'9\" converts to 175cm — the calculator handles both conversions internally so you can enter weight and height exactly as you'd say them out loud. If you're more used to pounds and inches without the stones, that's the same underlying math a BMI calculator using pounds and inches runs — just a different way of writing the same weight.",
       "If you'd rather work in kilograms and centimetres directly, the [[bmi-calculator-kg-cm|metric version]] is linked below."
     ],
     caveat: null,
@@ -403,7 +403,7 @@ const calculatorsData = [
     metaDescription: "Step-by-step guide to calculating BMI by hand, with the formula and a worked example.",
     h1: "How to Calculate BMI Manually",
     hook: "The imperial formula's mysterious '703' is just a unit-conversion constant, not a typo.",
-    intro: "The full formula, in both metric and imperial, with a worked example for each — useful if you're doing this on paper, checking homework, or just curious what the calculator above is actually doing.",
+    intro: "The full formula, in both metric and imperial, with a worked example for each — useful as a BMI calculator using measurements you've already jotted down, for checking homework, or just curious what the calculator above is actually doing.",
     type: "info",
     content: [
       { type: "h2", text: "Metric formula" },
@@ -456,7 +456,8 @@ const calculatorsData = [
         ["18–64", "Standard categories above apply most directly."],
         ["65+", "Some research associates slightly higher BMI (up to ~27) with no added mortality risk in this group, versus younger adults."]
       ]},
-      { type: "p", text: "None of these ranges account for muscle mass, pregnancy, or certain medical conditions — see the athlete, bodybuilder, or waist-circumference calculators for those situations." }
+      { type: "p", text: "None of these ranges account for muscle mass, pregnancy, or certain medical conditions — see the athlete, bodybuilder, or waist-circumference calculators for those situations." },
+      { type: "p", text: "For a finer breakdown of obesity class — Class I, II, and III rather than one flat 'Obese' band — see the classification table on the [[bmi-calculator|main BMI calculator]], which splits out the levels of obesity in more detail." }
     ],
     caveat: null,
     faq: [
@@ -474,7 +475,7 @@ const calculatorsData = [
     metaDescription: "Estimate your ideal body weight from height and gender using the Devine formula, with an explanation of what it does and doesn't account for.",
     h1: "Ideal Weight Calculator",
     hook: "A 175cm man's Devine-formula ideal weight is about 70.5kg — a reference point, not a strict target.",
-    intro: "Enter your height and gender to get an estimated ideal weight, using the Devine formula — the same one many hospitals use as a starting reference point, most often for medication dosing.",
+    intro: "If you've been asking a BMI calculator how much you should weigh and want a more direct answer, this tool estimates ideal weight straight from height and gender, using the Devine formula — the same one many hospitals use as a starting reference point, most often for medication dosing.",
     type: "form",
     formula: "ideal-weight",
     fields: [
@@ -530,7 +531,7 @@ const calculatorsData = [
       { id: "hip", label: "Hip circumference (inches, women only)", type: "number", placeholder: "38" }
     ],
     explainer: [
-      "The Navy method was developed for military fitness assessments and is accurate to within roughly 3–4% of a DEXA scan for most body types — far closer than [[bmi-calculator|BMI]] gets for anyone muscular.",
+      "The Navy method was developed for military fitness assessments and is accurate to within roughly 3–4% of a DEXA scan for most body types — far closer than [[bmi-calculator|BMI]] gets for anyone muscular. It's the natural next step if you've been running a BMI calculator vs body fat percentage comparison and want the body-fat side of that comparison to actually be a number, not a guess.",
       "For the most accurate reading, measure waist at the navel and neck just below the larynx, keeping the tape snug but not compressing the skin."
     ],
     caveat: "This is an estimate, not a clinical measurement — for a precise reading, a DEXA scan or hydrostatic weighing is the gold standard.",
@@ -574,7 +575,7 @@ const calculatorsData = [
       { id: "height", label: "Height (cm)", type: "number", placeholder: "178" }
     ],
     explainer: [
-      "The Boer formula estimates lean mass from just weight, height, and gender — it's a population-based estimate, not a direct measurement, so it won't capture unusually high or low muscle mass as accurately as [[body-fat-percentage-calculator|a body-fat percentage reading]] would.",
+      "The Boer formula estimates lean mass from just weight, height, and gender — it's a population-based estimate, not a direct measurement, so it won't capture unusually high or low muscle mass as accurately as [[body-fat-percentage-calculator|a body-fat percentage reading]] would. For tracking a BMI calculator with muscle mass changes over time — after a training block, say — lean mass is often the more useful number to watch than BMI itself.",
       "Lean body mass includes muscle, bone, organs, and water — everything in your body that isn't fat tissue."
     ],
     caveat: null,
