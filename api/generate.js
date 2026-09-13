@@ -167,7 +167,7 @@ function runGuardrails(brief, generated, existingFileContent) {
 }
 
 async function callGemini(prompt, apiKey) {
-  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
   // NOTE: verify this model name and endpoint against Gemini's current API docs —
   // model names and versions change; this was accurate as of this build.
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
