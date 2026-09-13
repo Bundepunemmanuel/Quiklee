@@ -333,6 +333,87 @@
         return { main: hours.toFixed(2) + " hours", sub: "= " + hh + "h " + mm2 + "m" };
       }
 
+      /* ---- Age & Date cluster ---- */
+      case "age-calculator": {
+        var birth = new Date(v.birthYear, v.birthMonth - 1, v.birthDay);
+        var today2 = new Date();
+        var years = today2.getFullYear() - birth.getFullYear();
+        var m = today2.getMonth() - birth.getMonth();
+        var d = today2.getDate() - birth.getDate();
+        if (d < 0) { m -= 1; d += new Date(today2.getFullYear(), today2.getMonth(), 0).getDate(); }
+        if (m < 0) { years -= 1; m += 12; }
+        var totalDays = Math.floor((today2 - birth) / 86400000);
+        return { main: years + " years, " + m + " months, " + d + " days", sub: "Total: " + totalDays.toLocaleString() + " days old" };
+      }
+
+      case "date-difference": {
+        var d1 = new Date(v.year1, v.month1 - 1, v.day1);
+        var d2 = new Date(v.year2, v.month2 - 1, v.day2);
+        var diffDays = Math.round(Math.abs(d2 - d1) / 86400000);
+        var diffWeeks = (diffDays / 7).toFixed(1);
+        return { main: diffDays.toLocaleString() + " days", sub: "≈ " + diffWeeks + " weeks" };
+      }
+
+      case "day-of-week": {
+        var dt = new Date(v.year, v.month - 1, v.day);
+        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        return { main: days[dt.getDay()], sub: dt.toDateString() };
+      }
+
+      /* ---- Financial cluster ---- */
+      case "simple-interest": {
+        var interest = (v.principal * v.rate * v.years) / 100;
+        return { main: "$" + interest.toFixed(2) + " interest", sub: "Total repaid: $" + (v.principal + interest).toFixed(2) };
+      }
+
+      case "compound-interest": {
+        var n = v.compoundsPerYear || 1;
+        var amount = v.principal * Math.pow(1 + (v.rate / 100) / n, n * v.years);
+        var gain = amount - v.principal;
+        return { main: "$" + amount.toFixed(2) + " total", sub: "Interest earned: $" + gain.toFixed(2) };
+      }
+
+      case "loan-payment": {
+        var monthlyRate = (v.rate / 100) / 12;
+        var numPayments = v.years * 12;
+        var payment = monthlyRate === 0
+          ? v.principal / numPayments
+          : (v.principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        var totalPaid = payment * numPayments;
+        return { main: "$" + payment.toFixed(2) + "/month", sub: "Total paid over " + v.years + " years: $" + totalPaid.toFixed(2) };
+      }
+
+      case "savings-goal": {
+        var monthsNeeded = v.monthlyContribution > 0 ? Math.ceil((v.goal - v.current) / v.monthlyContribution) : 0;
+        var yearsPart = Math.floor(monthsNeeded / 12);
+        var monthsPart = monthsNeeded % 12;
+        return { main: monthsNeeded + " months to reach goal", sub: yearsPart + " years, " + monthsPart + " months at $" + v.monthlyContribution + "/mo" };
+      }
+
+      /* ---- Everyday/Math cluster ---- */
+      case "average": {
+        var nums = String(v.numbers).split(",").map(function (n) { return parseFloat(n.trim()); }).filter(function (n) { return !isNaN(n); });
+        var avg = nums.reduce(function (a, b) { return a + b; }, 0) / nums.length;
+        return { main: avg.toFixed(2), sub: "Average of " + nums.length + " numbers" };
+      }
+
+      case "ratio-simplify": {
+        function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+        var g = gcd(v.a, v.b);
+        return { main: (v.a / g) + " : " + (v.b / g), sub: "Simplified from " + v.a + " : " + v.b };
+      }
+
+      case "square-root": {
+        var sq = Math.sqrt(v.number);
+        return { main: sq.toFixed(4), sub: v.number + " is " + (sq === Math.floor(sq) ? "a perfect square" : "not a perfect square") };
+      }
+
+      case "gpa-calculator": {
+        var points = String(v.grades).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var gpa = points.reduce(function (a, b) { return a + b; }, 0) / points.length;
+        return { main: gpa.toFixed(2) + " GPA", sub: "Average of " + points.length + " grade points" };
+      }
+
       default:
         return { main: "—", sub: null };
     }

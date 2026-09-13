@@ -29,6 +29,19 @@
   #app { display:none; }
   .error { color:#B8443A; font-size:0.85rem; margin-top:6px; }
   .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .tabs { display:flex; gap:4px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+  .tab { padding:10px 16px; cursor:pointer; font-size:0.9rem; font-weight:600; color:var(--muted); border-bottom:2px solid transparent; }
+  .tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .brief-slot { border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px; }
+  select { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:0.95rem; margin-bottom:10px; }
+  textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; margin-bottom:10px; font-family:inherit; min-height:60px; }
+  .sync-badge { font-size:0.8rem; padding:4px 10px; border-radius:12px; background:var(--result); color:#fff; display:inline-block; }
+  .sync-badge.error { background:#B8443A; }
+  .rejected-item { border-left:3px solid #B8443A; padding:10px 12px; margin-bottom:8px; background:#FBEAE8; border-radius:0 6px 6px 0; }
+  .rejected-item .slug { font-weight:600; }
+  .rejected-item ul { margin:6px 0 0; padding-left:18px; font-size:0.85rem; }
 </style>
 </head>
 <body>
@@ -42,9 +55,15 @@
 </div>
 
 <div id="app" class="wrap">
-  <h1>Keyword Research Dashboard</h1>
-  <p class="muted">Serper.dev-powered — long-tail discovery and People Also Ask data.</p>
+  <h1>Quiklee Dashboard</h1>
+  <p class="muted">Keyword research + Gemini-powered content generation.</p>
 
+  <div class="tabs">
+    <div class="tab active" id="tab-research" onclick="switchTab('research')">Keyword Research</div>
+    <div class="tab" id="tab-generate" onclick="switchTab('generate')">Generate Content</div>
+  </div>
+
+  <div class="panel active" id="panel-research">
   <div class="card">
     <label for="seed">Seed keyword</label>
     <input type="text" id="seed" placeholder="e.g. roi calculator">
@@ -79,12 +98,64 @@
       <tbody></tbody>
     </table>
   </div>
+  </div>
+
+  <div class="panel" id="panel-generate">
+    <div class="card">
+      <label for="gen-section">Section</label>
+      <select id="gen-section" onchange="onSectionChange()">
+        <option value="calculators">Calculators</option>
+        <option value="meanings">Meanings</option>
+        <option value="converters">Converters</option>
+      </select>
+      <div class="toolbar">
+        <button onclick="syncFromGitHub()" id="sync-btn">Sync latest from GitHub</button>
+        <span id="sync-status"></span>
+      </div>
+      <div class="error" id="sync-error"></div>
+    </div>
+
+    <div class="card" id="briefs-card" style="display:none;">
+      <p class="muted">Fill in up to 5 items to generate in one batch. Formula dropdown only applies to calculators.</p>
+      <div id="brief-slots"></div>
+      <div class="toolbar">
+        <button onclick="addBriefSlot()">+ Add slot (max 5)</button>
+        <button class="secondary" onclick="generateContent()" id="generate-btn">Generate Content</button>
+      </div>
+      <div class="error" id="generate-error"></div>
+    </div>
+
+    <div class="card" id="generate-results-card" style="display:none;">
+      <h3 style="margin-top:0;">Accepted</h3>
+      <p id="accepted-summary" class="muted"></p>
+      <button onclick="downloadUpdatedFile()">Download updated data file</button>
+
+      <h3>Rejected (needs review)</h3>
+      <div id="rejected-list"></div>
+    </div>
+  </div>
 </div>
 
 <script>
   let adminKey = "";
   let currentKeywords = [];
   let paaData = [];
+  let currentFileContent = "";
+  let updatedFileContent = "";
+  let currentSection = "calculators";
+
+  const CALC_FORMULAS = [
+    "age-calculator", "date-difference", "day-of-week",
+    "simple-interest", "compound-interest", "loan-payment", "savings-goal",
+    "average", "ratio-simplify", "square-root", "gpa-calculator"
+  ];
+
+  function switchTab(name) {
+    document.getElementById("tab-research").classList.toggle("active", name === "research");
+    document.getElementById("tab-generate").classList.toggle("active", name === "generate");
+    document.getElementById("panel-research").classList.toggle("active", name === "research");
+    document.getElementById("panel-generate").classList.toggle("active", name === "generate");
+  }
 
   function unlock() {
     adminKey = document.getElementById("pw-input").value;
@@ -206,6 +277,148 @@
     const a = document.createElement("a");
     a.href = url;
     a.download = "keyword-research-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ---------------- Generate Content tab ---------------- */
+
+  function onSectionChange() {
+    currentSection = document.getElementById("gen-section").value;
+    document.getElementById("briefs-card").style.display = "none";
+    document.getElementById("generate-results-card").style.display = "none";
+  }
+
+  async function syncFromGitHub() {
+    const statusEl = document.getElementById("sync-status");
+    const errEl = document.getElementById("sync-error");
+    errEl.textContent = "";
+    statusEl.innerHTML = "";
+    const btn = document.getElementById("sync-btn");
+    btn.disabled = true; btn.textContent = "Syncing…";
+
+    try {
+      const res = await fetch("/api/fetch-data?section=" + currentSection, {
+        headers: { "x-admin-key": adminKey }
+      });
+      if (res.status === 401) throw new Error("Unauthorized — session expired, reload and log in again.");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Fetch failed");
+
+      currentFileContent = data.content;
+      statusEl.innerHTML = '<span class="sync-badge">✓ Synced — ' + currentSection + '-data.js</span>';
+      document.getElementById("briefs-card").style.display = "block";
+      if (document.getElementById("brief-slots").children.length === 0) addBriefSlot();
+    } catch (e) {
+      statusEl.innerHTML = '<span class="sync-badge error">✗ Sync failed</span>';
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Sync latest from GitHub";
+    }
+  }
+
+  function addBriefSlot() {
+    const container = document.getElementById("brief-slots");
+    if (container.children.length >= 5) return;
+    const idx = container.children.length;
+    const isCalc = currentSection === "calculators";
+
+    const div = document.createElement("div");
+    div.className = "brief-slot";
+    div.innerHTML = `
+      <label>Slug (e.g. age-calculator)</label>
+      <input type="text" class="b-slug" placeholder="age-calculator">
+      <label>Title</label>
+      <input type="text" class="b-title" placeholder="Age Calculator">
+      <label>Title hook (short, non-generic)</label>
+      <input type="text" class="b-hook" placeholder="Exact Age, Down to the Day">
+      <label>Hook line (worked example under H1)</label>
+      <input type="text" class="b-hookline" placeholder="Someone born June 3, 1990 is...">
+      ${isCalc ? `<label>Formula (must already exist in main.js)</label>
+      <select class="b-formula">${CALC_FORMULAS.map(f => `<option value="${f}">${f}</option>`).join("")}</select>
+      <label>Depth level</label>
+      <select class="b-complexity"><option value="lean">Lean</option><option value="standard" selected>Standard</option><option value="flagship">Flagship</option></select>` : ""}
+      <label>Required real questions (one per line, from your keyword research)</label>
+      <textarea class="b-questions" placeholder="how do I calculate my age in years and days"></textarea>
+      <label>Required keywords to weave into body text (one per line)</label>
+      <textarea class="b-keywords" placeholder="age calculator by date of birth"></textarea>
+    `;
+    container.appendChild(div);
+  }
+
+  function collectBriefs() {
+    const slots = document.querySelectorAll(".brief-slot");
+    return Array.from(slots).map((slot) => {
+      const brief = {
+        slug: slot.querySelector(".b-slug").value.trim(),
+        title: slot.querySelector(".b-title").value.trim(),
+        titleHook: slot.querySelector(".b-hook").value.trim(),
+        hook: slot.querySelector(".b-hookline").value.trim(),
+        requiredQuestions: slot.querySelector(".b-questions").value.split("\n").map(s => s.trim()).filter(Boolean),
+        requiredKeywords: slot.querySelector(".b-keywords").value.split("\n").map(s => s.trim()).filter(Boolean),
+        related: []
+      };
+      const formulaEl = slot.querySelector(".b-formula");
+      if (formulaEl) brief.formula = formulaEl.value;
+      const complexityEl = slot.querySelector(".b-complexity");
+      if (complexityEl) brief.complexity = complexityEl.value;
+      return brief;
+    }).filter((b) => b.slug && b.title);
+  }
+
+  async function generateContent() {
+    const errEl = document.getElementById("generate-error");
+    errEl.textContent = "";
+    const briefs = collectBriefs();
+    if (briefs.length === 0) { errEl.textContent = "Fill in at least one brief (slug + title required)."; return; }
+    if (!currentFileContent) { errEl.textContent = "Sync from GitHub first."; return; }
+
+    const btn = document.getElementById("generate-btn");
+    btn.disabled = true; btn.textContent = "Generating (this can take a minute)…";
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ section: currentSection, currentFileContent, briefs })
+      });
+      if (res.status === 401) throw new Error("Unauthorized — session expired, reload and log in again.");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Generation failed");
+
+      updatedFileContent = data.updatedFileContent;
+      document.getElementById("accepted-summary").textContent =
+        data.accepted.length + " of " + briefs.length + " accepted: " + (data.accepted.join(", ") || "none");
+      renderRejected(data.rejected);
+      document.getElementById("generate-results-card").style.display = "block";
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Generate Content";
+    }
+  }
+
+  function renderRejected(rejected) {
+    const container = document.getElementById("rejected-list");
+    container.innerHTML = "";
+    if (!rejected || rejected.length === 0) {
+      container.innerHTML = '<p class="muted">None — everything passed guardrails.</p>';
+      return;
+    }
+    rejected.forEach((r) => {
+      const div = document.createElement("div");
+      div.className = "rejected-item";
+      div.innerHTML = `<div class="slug">${r.slug}</div><ul>${r.reasons.map(reason => `<li>${reason}</li>`).join("")}</ul>`;
+      container.appendChild(div);
+    });
+  }
+
+  function downloadUpdatedFile() {
+    const blob = new Blob([updatedFileContent], { type: "text/javascript" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = currentSection + "-data.js";
     a.click();
     URL.revokeObjectURL(url);
   }

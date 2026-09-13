@@ -97,6 +97,30 @@ to know or write the target section's path yourself — just the slug.
 4. After it's live: add the site in Google Search Console, submit `sitemap.xml` once, and use
    the URL Inspection tool to request indexing for the first few pages manually.
 
+## Troubleshooting indexing (Discovered / Crawled — currently not indexed)
+
+If pages sit in Search Console under one of these two statuses without getting indexed, they
+mean different things — worth diagnosing correctly rather than guessing:
+
+- **"Discovered — currently not indexed"** — Google knows the URL exists (usually via the
+  sitemap or an internal link) but hasn't crawled it yet. Common causes: limited crawl budget
+  on a new/low-authority domain, or the crawler deprioritizing it because other signals (site
+  authority, server response times) made it a lower priority. Usually resolves with patience
+  and more internal linking — it's a "not yet," not a rejection.
+- **"Crawled — currently not indexed"** — a more serious signal. Google *did* fetch the page
+  and chose not to index it. This is typically a content-quality judgment: thin or duplicate
+  content, weak E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) signals, or
+  a page that doesn't clearly answer the query it targets.
+
+**What actually fixes each one, based on how this site is built:**
+- For "Discovered": strengthen internal linking (the related-tools links and hub pages already
+  do this), submit the sitemap again, and use URL Inspection to manually request a crawl for
+  priority pages rather than waiting passively.
+- For "Crawled": this is exactly what the depth-block, real-FAQ, and natural-long-tail-phrasing
+  work throughout this build has been for — genuinely distinct content per page, not templated
+  filler. If a specific page ends up here, the fix is rewriting it to be more clearly useful and
+  distinct, not just resubmitting it and waiting.
+
 ## Keyword research so far
 
 A Google Keyword Planner export (seeded on BMI, percentage, tip, pay-raise, and basic
