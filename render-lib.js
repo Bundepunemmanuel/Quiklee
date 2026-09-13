@@ -216,6 +216,43 @@ function buildFaqSchema(faqList) {
   return JSON.stringify(schema);
 }
 
+/* Marks a form-type page (calculator/converter) as a tool Google can understand
+   structurally — gives it a real shot at surfacing for novel query phrasings that
+   were never explicitly targeted, since this is a semantic signal, not a keyword match. */
+function buildToolSchema(entry, canonicalUrl) {
+  if (entry.type !== "form") return "";
+  var schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": entry.title,
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any (web-based)",
+    "url": canonicalUrl,
+    "description": entry.metaDescription,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  };
+  return JSON.stringify(schema);
+}
+
+/* Builds HowTo schema from an entry's explainer paragraphs, when there's enough
+   structure to represent as steps. Skipped for entries without explainer content —
+   this is additive structured data, not something every page needs. */
+function buildHowToSchema(entry) {
+  if (!entry.explainer || entry.explainer.length === 0) return "";
+  var schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to use the " + entry.title,
+    "step": entry.explainer.map(function (paragraph, i) {
+      // Strip any [[slug|label]] link markup before using text in schema —
+      // schema.org fields expect plain text, not our internal link syntax.
+      var plainText = paragraph.replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, "$2");
+      return { "@type": "HowToStep", "position": i + 1, "text": plainText };
+    })
+  };
+  return JSON.stringify(schema);
+}
+
 /* Builds the inner #hub-list content for a category hub page */
 
 module.exports = {
@@ -227,5 +264,7 @@ module.exports = {
   buildDepthBlocksHTML: buildDepthBlocksHTML,
   buildGaugeHTML: buildGaugeHTML,
   buildFaqHTML: buildFaqHTML,
-  buildFaqSchema: buildFaqSchema
+  buildFaqSchema: buildFaqSchema,
+  buildToolSchema: buildToolSchema,
+  buildHowToSchema: buildHowToSchema
 };

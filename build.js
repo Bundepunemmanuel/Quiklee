@@ -11,7 +11,7 @@
 */
 const fs = require("fs");
 const path = require("path");
-const { esc, buildToolContentHTML, buildHubListHTML, buildClusterNav, buildFaqSchema } = require("./render-lib.js");
+const { esc, buildToolContentHTML, buildHubListHTML, buildClusterNav, buildFaqSchema, buildToolSchema, buildHowToSchema } = require("./render-lib.js");
 
 const calculatorsData = require("./calculators-data.js");
 const convertersData = require("./converters-data.js");
@@ -66,15 +66,23 @@ function buildSection(dataArray, sectionPath, sectionLabel) {
   dataArray.forEach(function (entry) {
     checkLengths(entry);
     const urlPath = "/" + sectionPath + "/" + entry.slug;
-    const faqSchema = buildFaqSchema(entry.faq);
+    const canonical = SITE + urlPath;
+    // Combine FAQ, SoftwareApplication, and HowTo schema into one or more script tags —
+    // each is additive structured data; empty ones are simply omitted.
+    const schemas = [
+      buildFaqSchema(entry.faq),
+      buildToolSchema(entry, canonical),
+      buildHowToSchema(entry)
+    ].filter(Boolean);
+    const schemaTags = schemas.map(function (s) { return '<script type="application/ld+json">' + s + "</script>"; }).join("\n");
     const html = fill(pageTemplate, {
       TITLE: esc(entry.title),
       TITLE_HOOK: esc(entry.titleHook || "Quiklee"),
       META_DESCRIPTION: esc(entry.metaDescription),
-      CANONICAL: SITE + urlPath,
+      CANONICAL: canonical,
       BREADCRUMB: '<a href="/">Home</a> &rsaquo; <a href="/' + sectionPath + '">' + esc(sectionLabel) + '</a> &rsaquo; ' + esc(entry.title),
       CONTENT: buildToolContentHTML(entry, allData, sectionPath, slugMap),
-      FAQ_SCHEMA_TAG: faqSchema ? '<script type="application/ld+json">' + faqSchema + "</script>" : ""
+      FAQ_SCHEMA_TAG: schemaTags
     });
     fs.writeFileSync(path.join(dir, entry.slug + ".html"), html);
   });

@@ -40,6 +40,8 @@
   .sync-badge { font-size:0.8rem; padding:4px 10px; border-radius:12px; background:var(--result); color:#fff; display:inline-block; }
   .sync-badge.error { background:#B8443A; }
   .rejected-item { border-left:3px solid #B8443A; padding:10px 12px; margin-bottom:8px; background:#FBEAE8; border-radius:0 6px 6px 0; }
+  .rejected-item.warning-only { border-left-color:#C77D22; background:#FBF0E1; }
+  .warnings-label { font-size:0.8rem; font-weight:600; margin-top:6px; color:#C77D22; }
   .rejected-item .slug { font-weight:600; }
   .rejected-item ul { margin:6px 0 0; padding-left:18px; font-size:0.85rem; }
   .discover-group { border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:10px; }
@@ -465,8 +467,12 @@
     }
     rejected.forEach((r) => {
       const div = document.createElement("div");
-      div.className = "rejected-item";
-      div.innerHTML = `<div class="slug">${r.slug}</div><ul>${r.reasons.map(reason => `<li>${reason}</li>`).join("")}</ul>`;
+      const isWarningOnly = (!r.reasons || r.reasons.length === 0) && r.warnings && r.warnings.length > 0;
+      div.className = isWarningOnly ? "rejected-item warning-only" : "rejected-item";
+      let html = `<div class="slug">${r.slug}</div>`;
+      if (r.reasons && r.reasons.length) html += `<ul>${r.reasons.map(reason => `<li>${reason}</li>`).join("")}</ul>`;
+      if (r.warnings && r.warnings.length) html += `<div class="warnings-label">⚠ Warnings (did not block acceptance):</div><ul>${r.warnings.map(w => `<li>${w}</li>`).join("")}</ul>`;
+      div.innerHTML = html;
       container.appendChild(div);
     });
   }
@@ -561,12 +567,16 @@
     }
   }
 
+  let discoveryItemStore = [];
+
   function renderDiscoveryResults(classification, research) {
     const container = document.getElementById("discover-results");
     container.innerHTML = "";
+    discoveryItemStore = [];
 
     const groups = [
       { key: "new-formula-needed", label: "⚠ New formula needed (flagged — needs a human to write the math first)", cls: "new-formula" },
+      { key: "topic-gap-existing-page", label: "Concept gap — worth adding to an existing page's content, no new page needed", cls: "faq-fold" },
       { key: "existing-formula-new-page", label: "Reuses an existing formula — could be its own page", cls: "existing-page" },
       { key: "fold-into-faq", label: "Just FAQ content for an existing page", cls: "faq-fold" }
     ];
@@ -577,12 +587,16 @@
       const div = document.createElement("div");
       div.className = "discover-group " + g.cls;
       let html = "<h4>" + g.label + " (" + items.length + ")</h4>";
-      items.forEach((item, i) => {
+      items.forEach((item) => {
+        const storeIndex = discoveryItemStore.length;
+        discoveryItemStore.push(item);
         html += `<div class="discover-item">
           <strong>${item.keyword}</strong>
           ${item.reason ? `<div class="reason">${item.reason}</div>` : ""}
           ${item.suggestedPage ? `<div class="reason">Suggested: ${item.suggestedPage}</div>` : ""}
-          ${g.key !== "new-formula-needed" ? `<br><button onclick='addBriefFromDiscovery(${JSON.stringify(item).replace(/'/g, "&apos;")})'>+ Add as brief</button>` : ""}
+          ${g.key === "existing-formula-new-page" || g.key === "fold-into-faq"
+            ? `<br><button data-index="${storeIndex}" onclick="handleAddAsBrief(this)">+ Add as brief</button><span class="add-status" id="add-status-${storeIndex}"></span>`
+            : ""}
         </div>`;
       });
       div.innerHTML = html;
@@ -591,6 +605,26 @@
 
     if (groups.every((g) => !(classification[g.key] || []).length)) {
       container.innerHTML = '<p class="muted">No classification results.</p>';
+    }
+  }
+
+  function handleAddAsBrief(buttonEl) {
+    const index = parseInt(buttonEl.getAttribute("data-index"), 10);
+    const statusEl = document.getElementById("add-status-" + index);
+    const item = discoveryItemStore[index];
+    if (!item) {
+      statusEl.textContent = " ✗ Could not find this item (index out of range).";
+      statusEl.style.color = "#B8443A";
+      return;
+    }
+    try {
+      addBriefFromDiscovery(item);
+      statusEl.textContent = " ✓ Added to brief slots below.";
+      statusEl.style.color = "var(--result)";
+      buttonEl.disabled = true;
+    } catch (e) {
+      statusEl.textContent = " ✗ Failed: " + e.message;
+      statusEl.style.color = "#B8443A";
     }
   }
 
