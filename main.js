@@ -414,6 +414,73 @@
         return { main: gpa.toFixed(2) + " GPA", sub: "Average of " + points.length + " grade points" };
       }
 
+      case "gpa-blended-current": {
+        // Blends an existing GPA (weighted by credits already earned) with a new
+        // semester's grades (weighted by new credit hours) — genuinely different
+        // math from a flat average, since past credits count more than one new class.
+        var newPoints = String(v.newGrades).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var newCredits = String(v.newCredits).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var newQualityPoints = 0, newCreditTotal = 0;
+        for (var i = 0; i < newPoints.length; i++) {
+          var c = newCredits[i] || 1;
+          newQualityPoints += newPoints[i] * c;
+          newCreditTotal += c;
+        }
+        var oldQualityPoints = v.currentGpa * v.currentCredits;
+        var blendedGpa = (oldQualityPoints + newQualityPoints) / (v.currentCredits + newCreditTotal);
+        return { main: blendedGpa.toFixed(2) + " GPA", sub: "Blended across " + (v.currentCredits + newCreditTotal) + " total credit hours" };
+      }
+
+      case "gpa-percentage-conversion": {
+        // Converts a percentage grade to the standard 4.0 scale first, then averages —
+        // needs an actual conversion table, not just a different label on the same math.
+        function pctToGpa(pct) {
+          if (pct >= 93) return 4.0;
+          if (pct >= 90) return 3.7;
+          if (pct >= 87) return 3.3;
+          if (pct >= 83) return 3.0;
+          if (pct >= 80) return 2.7;
+          if (pct >= 77) return 2.3;
+          if (pct >= 73) return 2.0;
+          if (pct >= 70) return 1.7;
+          if (pct >= 67) return 1.3;
+          if (pct >= 65) return 1.0;
+          return 0.0;
+        }
+        var pcts = String(v.percentages).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var converted = pcts.map(pctToGpa);
+        var pctGpa = converted.reduce(function (a, b) { return a + b; }, 0) / converted.length;
+        return { main: pctGpa.toFixed(2) + " GPA", sub: "Converted from " + pcts.length + " percentage grades using a standard 10-point scale" };
+      }
+
+      case "gpa-multi-college": {
+        // Combines GPA + credit hours across separate institutions — different
+        // inputs (multiple GPA/credit pairs) than a single-school flat average.
+        var gpas = String(v.collegeGpas).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var credits = String(v.collegeCredits).split(",").map(function (g) { return parseFloat(g.trim()); }).filter(function (n) { return !isNaN(n); });
+        var totalQualityPoints = 0, totalCredits = 0;
+        for (var j = 0; j < gpas.length; j++) {
+          var cr = credits[j] || 0;
+          totalQualityPoints += gpas[j] * cr;
+          totalCredits += cr;
+        }
+        var cumulativeGpa = totalCredits > 0 ? totalQualityPoints / totalCredits : 0;
+        return { main: cumulativeGpa.toFixed(2) + " cumulative GPA", sub: "Across " + gpas.length + " institutions, " + totalCredits + " total credit hours" };
+      }
+
+      case "gpa-no-aplus-scale": {
+        // Some schools cap the scale at 4.0 with no bonus for an A+, others go to
+        // 4.3/4.5 — a real scale difference, not just a different audience label.
+        function letterToGpaCapped(letter) {
+          var map = { "A+": 4.0, "A": 4.0, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7, "C+": 2.3, "C": 2.0, "C-": 1.7, "D+": 1.3, "D": 1.0, "F": 0.0 };
+          return map[letter.trim().toUpperCase()] !== undefined ? map[letter.trim().toUpperCase()] : null;
+        }
+        var letters = String(v.letterGrades).split(",").map(function (g) { return g.trim(); }).filter(Boolean);
+        var gradeValues = letters.map(letterToGpaCapped).filter(function (n) { return n !== null; });
+        var cappedGpa = gradeValues.reduce(function (a, b) { return a + b; }, 0) / gradeValues.length;
+        return { main: cappedGpa.toFixed(2) + " GPA", sub: "On a 4.0-capped scale (A+ counts the same as A) — " + gradeValues.length + " grades averaged" };
+      }
+
       default:
         return { main: "—", sub: null };
     }

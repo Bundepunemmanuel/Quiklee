@@ -42,6 +42,15 @@
   .rejected-item { border-left:3px solid #B8443A; padding:10px 12px; margin-bottom:8px; background:#FBEAE8; border-radius:0 6px 6px 0; }
   .rejected-item .slug { font-weight:600; }
   .rejected-item ul { margin:6px 0 0; padding-left:18px; font-size:0.85rem; }
+  .discover-group { border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:10px; }
+  .discover-group h4 { margin:0 0 8px; font-size:0.9rem; }
+  .discover-group.new-formula { border-left:4px solid #C77D22; }
+  .discover-group.existing-page { border-left:4px solid var(--primary); }
+  .discover-group.faq-fold { border-left:4px solid var(--muted); }
+  .discover-item { padding:8px 0; border-bottom:1px solid var(--border); font-size:0.86rem; }
+  .discover-item:last-child { border-bottom:none; }
+  .discover-item .reason { color:var(--muted); font-size:0.8rem; }
+  .discover-item button { font-size:0.78rem; padding:5px 10px; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -116,7 +125,20 @@
     </div>
 
     <div class="card" id="briefs-card" style="display:none;">
-      <p class="muted">Fill in up to 5 items to generate in one batch. Formula dropdown only applies to calculators.</p>
+      <div id="sync-preview" class="muted" style="margin-bottom:12px;"></div>
+
+      <h3 style="margin-top:0;">1. Discover & research a topic (optional)</h3>
+      <label for="discover-seed">Seed topic</label>
+      <input type="text" id="discover-seed" placeholder="e.g. gpa calculator">
+      <div class="toolbar">
+        <button onclick="runDiscovery()" id="discover-btn">Run Auto-Research + Classify</button>
+      </div>
+      <div class="error" id="discover-error"></div>
+      <div id="discover-log" style="font-size:0.85rem; color:var(--muted); margin-top:8px; font-family:monospace;"></div>
+      <div id="discover-results" style="margin-top:12px;"></div>
+
+      <h3>2. Brief slots to generate</h3>
+      <p class="muted">Fill in up to 5 items to generate in one batch, or click "Add as brief" on a discovery result above. Formula dropdown only applies to calculators.</p>
       <div id="brief-slots"></div>
       <div class="toolbar">
         <button onclick="addBriefSlot()">+ Add slot (max 5)</button>
@@ -128,7 +150,11 @@
     <div class="card" id="generate-results-card" style="display:none;">
       <h3 style="margin-top:0;">Accepted</h3>
       <p id="accepted-summary" class="muted"></p>
-      <button onclick="downloadUpdatedFile()">Download updated data file</button>
+      <div class="toolbar">
+        <button onclick="downloadUpdatedFile()">Download updated data file</button>
+        <button class="secondary" onclick="pushToChunkBranch()" id="push-btn">Push to Chunk branch</button>
+      </div>
+      <div id="push-status" class="muted" style="margin-top:6px;"></div>
 
       <h3>Rejected (needs review)</h3>
       <div id="rejected-list"></div>
@@ -287,13 +313,33 @@
     currentSection = document.getElementById("gen-section").value;
     document.getElementById("briefs-card").style.display = "none";
     document.getElementById("generate-results-card").style.display = "none";
+    document.getElementById("sync-status").innerHTML = "";
+    document.getElementById("sync-preview").textContent = "";
+    document.getElementById("brief-slots").innerHTML = "";
+    document.getElementById("discover-results").innerHTML = "";
+    document.getElementById("discover-log").innerHTML = "";
+    currentFileContent = "";
+  }
+
+  /* Rough parse to count entries in a data file's array — counts top-level
+     "slug:" occurrences, which matches our one-slug-per-entry convention. */
+  function countEntries(fileContent) {
+    const matches = fileContent.match(/slug:\s*"/g);
+    return matches ? matches.length : 0;
   }
 
   async function syncFromGitHub() {
     const statusEl = document.getElementById("sync-status");
     const errEl = document.getElementById("sync-error");
+    const previewEl = document.getElementById("sync-preview");
     errEl.textContent = "";
     statusEl.innerHTML = "";
+    previewEl.textContent = "";
+    // Always clear stale slots from a previous section before loading the new one
+    document.getElementById("brief-slots").innerHTML = "";
+    document.getElementById("discover-results").innerHTML = "";
+    document.getElementById("discover-log").innerHTML = "";
+
     const btn = document.getElementById("sync-btn");
     btn.disabled = true; btn.textContent = "Syncing…";
 
@@ -306,9 +352,11 @@
       if (!res.ok) throw new Error(data.error || "Fetch failed");
 
       currentFileContent = data.content;
-      statusEl.innerHTML = '<span class="sync-badge">✓ Synced — ' + currentSection + '-data.js</span>';
+      const count = countEntries(currentFileContent);
+      statusEl.innerHTML = '<span class="sync-badge">✓ Synced — ' + currentSection + '-data.js (Chunk branch)</span>';
+      previewEl.textContent = count + " existing entries found. Fetched " + new Date().toLocaleTimeString() + ".";
       document.getElementById("briefs-card").style.display = "block";
-      if (document.getElementById("brief-slots").children.length === 0) addBriefSlot();
+      addBriefSlot();
     } catch (e) {
       statusEl.innerHTML = '<span class="sync-badge error">✗ Sync failed</span>';
       errEl.textContent = e.message;
@@ -421,6 +469,124 @@
     a.download = currentSection + "-data.js";
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function pushToChunkBranch() {
+    const statusEl = document.getElementById("push-status");
+    const btn = document.getElementById("push-btn");
+    if (!updatedFileContent) { statusEl.textContent = "Nothing generated yet to push."; return; }
+    btn.disabled = true; btn.textContent = "Pushing…";
+    statusEl.textContent = "";
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ action: "commit", section: currentSection, updatedFileContent })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Push failed");
+      statusEl.textContent = "✓ Pushed to Chunk branch. Open a pull request on GitHub when ready.";
+    } catch (e) {
+      statusEl.textContent = "✗ " + e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Push to Chunk branch";
+    }
+  }
+
+  /* ---------------- Discovery: auto-research + classify ---------------- */
+
+  function appendLog(line) {
+    const el = document.getElementById("discover-log");
+    el.innerHTML += line + "<br>";
+  }
+
+  async function runDiscovery() {
+    const seed = document.getElementById("discover-seed").value.trim();
+    const errEl = document.getElementById("discover-error");
+    errEl.textContent = "";
+    document.getElementById("discover-log").innerHTML = "";
+    document.getElementById("discover-results").innerHTML = "";
+    if (!seed) { errEl.textContent = "Enter a seed topic first."; return; }
+
+    const btn = document.getElementById("discover-btn");
+    btn.disabled = true; btn.textContent = "Researching…";
+
+    try {
+      appendLog("→ Calling auto-research pipeline for \"" + seed + "\"...");
+      const researchRes = await fetch("/api/auto-research", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ seed, maxPaaQueries: 6 })
+      });
+      const research = await researchRes.json();
+      if (!researchRes.ok) throw new Error(research.error || "Auto-research failed");
+      (research.log || []).forEach((line) => appendLog("→ " + line));
+
+      appendLog("→ Classifying " + research.longtailKeywords.length + " keywords against existing formulas...");
+      const classifyRes = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({
+          action: "classify",
+          seedTopic: seed,
+          existingFormulas: currentSection === "calculators" ? CALC_FORMULAS : [],
+          keywords: research.longtailKeywords.slice(0, 40) // cap prompt size
+        })
+      });
+      const classification = await classifyRes.json();
+      if (!classifyRes.ok) throw new Error(classification.error || "Classification failed");
+      appendLog("→ Classification complete.");
+
+      renderDiscoveryResults(classification, research);
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Run Auto-Research + Classify";
+    }
+  }
+
+  function renderDiscoveryResults(classification, research) {
+    const container = document.getElementById("discover-results");
+    container.innerHTML = "";
+
+    const groups = [
+      { key: "new-formula-needed", label: "⚠ New formula needed (flagged — needs a human to write the math first)", cls: "new-formula" },
+      { key: "existing-formula-new-page", label: "Reuses an existing formula — could be its own page", cls: "existing-page" },
+      { key: "fold-into-faq", label: "Just FAQ content for an existing page", cls: "faq-fold" }
+    ];
+
+    groups.forEach((g) => {
+      const items = classification[g.key] || [];
+      if (items.length === 0) return;
+      const div = document.createElement("div");
+      div.className = "discover-group " + g.cls;
+      let html = "<h4>" + g.label + " (" + items.length + ")</h4>";
+      items.forEach((item, i) => {
+        html += `<div class="discover-item">
+          <strong>${item.keyword}</strong>
+          ${item.reason ? `<div class="reason">${item.reason}</div>` : ""}
+          ${item.suggestedPage ? `<div class="reason">Suggested: ${item.suggestedPage}</div>` : ""}
+          ${g.key !== "new-formula-needed" ? `<br><button onclick='addBriefFromDiscovery(${JSON.stringify(item).replace(/'/g, "&apos;")})'>+ Add as brief</button>` : ""}
+        </div>`;
+      });
+      div.innerHTML = html;
+      container.appendChild(div);
+    });
+
+    if (groups.every((g) => !(classification[g.key] || []).length)) {
+      container.innerHTML = '<p class="muted">No classification results.</p>';
+    }
+  }
+
+  function addBriefFromDiscovery(item) {
+    addBriefSlot();
+    const slots = document.querySelectorAll(".brief-slot");
+    const slot = slots[slots.length - 1];
+    const suggestedTitle = item.suggestedPage || item.keyword;
+    slot.querySelector(".b-title").value = suggestedTitle;
+    slot.querySelector(".b-slug").value = suggestedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    slot.querySelector(".b-keywords").value = item.keyword;
   }
 </script>
 </body>
