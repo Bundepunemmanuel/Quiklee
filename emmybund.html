@@ -168,13 +168,22 @@
   let paaData = [];
   let currentFileContent = "";
   let updatedFileContent = "";
+  let lastResearch = null;
   let currentSection = "calculators";
 
   const CALC_FORMULAS = [
     "age-calculator", "date-difference", "day-of-week",
     "simple-interest", "compound-interest", "loan-payment", "savings-goal",
-    "average", "ratio-simplify", "square-root", "gpa-calculator"
+    "average", "ratio-simplify", "square-root", "gpa-calculator",
+    "gpa-blended-current", "gpa-percentage-conversion", "gpa-multi-college", "gpa-no-aplus-scale"
   ];
+  const CONVERTER_FORMULAS = ["length-generic", "height-cm-feet", "pace-km-mile", "weight-kg-lbs", "time-min-hours"];
+
+  const SECTION_EXAMPLES = {
+    calculators: { slug: "age-calculator", title: "Age Calculator", hook: "Someone born June 3, 1990 is 35 years, 3 months, X days old today.", titleHook: "Exact Age, Down to the Day", question: "how do I calculate my age in years and days", keyword: "age calculator by date of birth" },
+    converters: { slug: "kg-to-lbs-converter", title: "kg to lbs Converter", hook: "70kg converts to about 154.3 lbs — enter either value and it converts automatically.", titleHook: "Either Direction, Instant", question: "how many pounds is 1 kg", keyword: "kg to lbs conversion chart" },
+    meanings: { slug: "fyi-meaning", title: "FYI Meaning", hook: "FYI signals no response is needed — that's what separates it from a request.", titleHook: "No Reply Needed", question: "what does fyi stand for", keyword: "fyi meaning in email" }
+  };
 
   function switchTab(name) {
     document.getElementById("tab-research").classList.toggle("active", name === "research");
@@ -368,28 +377,29 @@
   function addBriefSlot() {
     const container = document.getElementById("brief-slots");
     if (container.children.length >= 5) return;
-    const idx = container.children.length;
-    const isCalc = currentSection === "calculators";
+    const needsFormula = currentSection === "calculators" || currentSection === "converters";
+    const formulaList = currentSection === "calculators" ? CALC_FORMULAS : CONVERTER_FORMULAS;
+    const ex = SECTION_EXAMPLES[currentSection] || SECTION_EXAMPLES.calculators;
 
     const div = document.createElement("div");
     div.className = "brief-slot";
     div.innerHTML = `
-      <label>Slug (e.g. age-calculator)</label>
-      <input type="text" class="b-slug" placeholder="age-calculator">
+      <label>Slug (e.g. ${ex.slug})</label>
+      <input type="text" class="b-slug" placeholder="${ex.slug}">
       <label>Title</label>
-      <input type="text" class="b-title" placeholder="Age Calculator">
-      <label>Title hook (short, non-generic)</label>
-      <input type="text" class="b-hook" placeholder="Exact Age, Down to the Day">
-      <label>Hook line (worked example under H1)</label>
-      <input type="text" class="b-hookline" placeholder="Someone born June 3, 1990 is...">
-      ${isCalc ? `<label>Formula (must already exist in main.js)</label>
-      <select class="b-formula">${CALC_FORMULAS.map(f => `<option value="${f}">${f}</option>`).join("")}</select>
+      <input type="text" class="b-title" placeholder="${ex.title}">
+      <label>Title hook — optional, leave blank and Gemini will draft one</label>
+      <input type="text" class="b-hook" placeholder="${ex.titleHook}">
+      <label>Hook line — optional, leave blank and Gemini will draft one</label>
+      <input type="text" class="b-hookline" placeholder="${ex.hook}">
+      ${needsFormula ? `<label>Formula (must already exist in main.js)</label>
+      <select class="b-formula">${formulaList.map(f => `<option value="${f}">${f}</option>`).join("")}</select>
       <label>Depth level</label>
       <select class="b-complexity"><option value="lean">Lean</option><option value="standard" selected>Standard</option><option value="flagship">Flagship</option></select>` : ""}
       <label>Required real questions (one per line, from your keyword research)</label>
-      <textarea class="b-questions" placeholder="how do I calculate my age in years and days"></textarea>
+      <textarea class="b-questions" placeholder="${ex.question}"></textarea>
       <label>Required keywords to weave into body text (one per line)</label>
-      <textarea class="b-keywords" placeholder="age calculator by date of birth"></textarea>
+      <textarea class="b-keywords" placeholder="${ex.keyword}"></textarea>
     `;
     container.appendChild(div);
   }
@@ -522,6 +532,11 @@
       const research = await researchRes.json();
       if (!researchRes.ok) throw new Error(research.error || "Auto-research failed");
       (research.log || []).forEach((line) => appendLog("→ " + line));
+      lastResearch = research;
+
+      const formulasForSection = currentSection === "calculators" ? CALC_FORMULAS
+        : currentSection === "converters" ? CONVERTER_FORMULAS
+        : [];
 
       appendLog("→ Classifying " + research.longtailKeywords.length + " keywords against existing formulas...");
       const classifyRes = await fetch("/api/generate", {
@@ -530,7 +545,7 @@
         body: JSON.stringify({
           action: "classify",
           seedTopic: seed,
-          existingFormulas: currentSection === "calculators" ? CALC_FORMULAS : [],
+          existingFormulas: formulasForSection,
           keywords: research.longtailKeywords.slice(0, 40) // cap prompt size
         })
       });
@@ -584,9 +599,30 @@
     const slots = document.querySelectorAll(".brief-slot");
     const slot = slots[slots.length - 1];
     const suggestedTitle = item.suggestedPage || item.keyword;
-    slot.querySelector(".b-title").value = suggestedTitle;
+    slot.querySelector(".b-title").value = titleCase(suggestedTitle);
     slot.querySelector(".b-slug").value = suggestedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     slot.querySelector(".b-keywords").value = item.keyword;
+
+    // Pre-select the matched formula, if the classifier identified one and it's a real option
+    const formulaEl = slot.querySelector(".b-formula");
+    if (formulaEl && item.matchedFormula) {
+      const optionExists = Array.from(formulaEl.options).some((o) => o.value === item.matchedFormula);
+      if (optionExists) formulaEl.value = item.matchedFormula;
+    }
+
+    // Auto-fill required questions from the PAA data already fetched for this exact keyword
+    if (lastResearch && lastResearch.paaResults) {
+      const match = lastResearch.paaResults.find((r) => r.keyword === item.keyword);
+      if (match && match.questions.length) {
+        slot.querySelector(".b-questions").value = match.questions.map((q) => q.question).join("\n");
+      }
+    }
+    // titleHook and hook are left blank on purpose — /api/generate.js has Gemini draft
+    // these too when they're empty, checked by the same guardrails as everything else.
+  }
+
+  function titleCase(str) {
+    return str.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
 </script>
 </body>
