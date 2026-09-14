@@ -440,16 +440,14 @@
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
-        body: JSON.stringify({ section: currentSection, currentFileContent, briefs })
+        body: JSON.stringify({ section: currentSection, currentFileContent, newPageBriefs: briefs, faqAdditions: [] })
       });
       if (res.status === 401) throw new Error("Unauthorized — session expired, reload and log in again.");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Generation failed");
 
       updatedFileContent = data.updatedFileContent;
-      document.getElementById("accepted-summary").textContent =
-        data.accepted.length + " of " + briefs.length + " accepted: " + (data.accepted.join(", ") || "none");
-      renderRejected(data.rejected);
+      renderGenerateResults(data);
       document.getElementById("generate-results-card").style.display = "block";
     } catch (e) {
       errEl.textContent = e.message;
@@ -574,11 +572,13 @@
     container.innerHTML = "";
     discoveryItemStore = [];
 
+    // "type" here drives how each checked item gets used when "Generate Selected" runs:
+    // new-page items become newPageBriefs, faq-type items become faqAdditions grouped by target.
     const groups = [
-      { key: "new-formula-needed", label: "⚠ New formula needed (flagged — needs a human to write the math first)", cls: "new-formula" },
-      { key: "topic-gap-existing-page", label: "Concept gap — worth adding to an existing page's content, no new page needed", cls: "faq-fold" },
-      { key: "existing-formula-new-page", label: "Reuses an existing formula — could be its own page", cls: "existing-page" },
-      { key: "fold-into-faq", label: "Just FAQ content for an existing page", cls: "faq-fold" }
+      { key: "new-formula-needed", label: "⚠ New formula needed (flagged — needs a human to write the math first)", cls: "new-formula", type: "readonly" },
+      { key: "existing-formula-new-page", label: "Reuses an existing formula — could be its own page", cls: "existing-page", type: "new-page" },
+      { key: "topic-gap-existing-page", label: "Concept gap — worth adding to an existing page's content", cls: "faq-fold", type: "faq" },
+      { key: "fold-into-faq", label: "Just FAQ content for an existing page", cls: "faq-fold", type: "faq" }
     ];
 
     groups.forEach((g) => {
@@ -586,17 +586,23 @@
       if (items.length === 0) return;
       const div = document.createElement("div");
       div.className = "discover-group " + g.cls;
-      let html = "<h4>" + g.label + " (" + items.length + ")</h4>";
+      let headerHtml = "<h4>" + g.label + " (" + items.length + ")</h4>";
+      if (g.type !== "readonly") {
+        headerHtml += `<div class="toolbar" style="margin-bottom:8px;">
+          <button onclick="selectGroup('${g.key}', true)">Select all</button>
+          <button onclick="selectGroup('${g.key}', false)">Select none</button>
+        </div>`;
+      }
+      let html = headerHtml;
       items.forEach((item) => {
         const storeIndex = discoveryItemStore.length;
-        discoveryItemStore.push(item);
+        discoveryItemStore.push(Object.assign({}, item, { groupKey: g.key, itemType: g.type }));
         html += `<div class="discover-item">
+          ${g.type !== "readonly" ? `<input type="checkbox" class="discover-check" data-group="${g.key}" data-index="${storeIndex}">` : ""}
           <strong>${item.keyword}</strong>
           ${item.reason ? `<div class="reason">${item.reason}</div>` : ""}
-          ${item.suggestedPage ? `<div class="reason">Suggested: ${item.suggestedPage}</div>` : ""}
-          ${g.key === "existing-formula-new-page" || g.key === "fold-into-faq"
-            ? `<br><button data-index="${storeIndex}" onclick="handleAddAsBrief(this)">+ Add as brief</button><span class="add-status" id="add-status-${storeIndex}"></span>`
-            : ""}
+          ${item.concept ? `<div class="reason">Concept: ${item.concept}</div>` : ""}
+          ${item.suggestedPage ? `<div class="reason">Target: ${item.suggestedPage}</div>` : ""}
         </div>`;
       });
       div.innerHTML = html;
@@ -605,55 +611,115 @@
 
     if (groups.every((g) => !(classification[g.key] || []).length)) {
       container.innerHTML = '<p class="muted">No classification results.</p>';
+    } else {
+      const bar = document.createElement("div");
+      bar.className = "toolbar";
+      bar.style.marginTop = "12px";
+      bar.innerHTML = `<span id="selected-count">0 selected</span>
+        <button class="secondary" onclick="generateSelected()" id="generate-selected-btn">Generate Selected</button>`;
+      container.appendChild(bar);
+      document.querySelectorAll(".discover-check").forEach((cb) => cb.addEventListener("change", updateSelectedCount));
     }
   }
 
-  function handleAddAsBrief(buttonEl) {
-    const index = parseInt(buttonEl.getAttribute("data-index"), 10);
-    const statusEl = document.getElementById("add-status-" + index);
-    const item = discoveryItemStore[index];
-    if (!item) {
-      statusEl.textContent = " ✗ Could not find this item (index out of range).";
-      statusEl.style.color = "#B8443A";
-      return;
-    }
-    try {
-      addBriefFromDiscovery(item);
-      statusEl.textContent = " ✓ Added to brief slots below.";
-      statusEl.style.color = "var(--result)";
-      buttonEl.disabled = true;
-    } catch (e) {
-      statusEl.textContent = " ✗ Failed: " + e.message;
-      statusEl.style.color = "#B8443A";
-    }
+  function selectGroup(groupKey, state) {
+    document.querySelectorAll(`.discover-check[data-group="${groupKey}"]`).forEach((cb) => cb.checked = state);
+    updateSelectedCount();
   }
 
-  function addBriefFromDiscovery(item) {
-    addBriefSlot();
-    const slots = document.querySelectorAll(".brief-slot");
-    const slot = slots[slots.length - 1];
-    const suggestedTitle = item.suggestedPage || item.keyword;
-    slot.querySelector(".b-title").value = titleCase(suggestedTitle);
-    slot.querySelector(".b-slug").value = suggestedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    slot.querySelector(".b-keywords").value = item.keyword;
+  function updateSelectedCount() {
+    const n = document.querySelectorAll(".discover-check:checked").length;
+    const el = document.getElementById("selected-count");
+    if (el) el.textContent = n + " selected" + (n > 10 ? " — max 10 per batch, uncheck some" : "");
+  }
 
-    // Pre-select the matched formula, if the classifier identified one and it's a real option
-    const formulaEl = slot.querySelector(".b-formula");
-    if (formulaEl && item.matchedFormula) {
-      const optionExists = Array.from(formulaEl.options).some((o) => o.value === item.matchedFormula);
-      if (optionExists) formulaEl.value = item.matchedFormula;
-    }
+  async function generateSelected() {
+    const checked = Array.from(document.querySelectorAll(".discover-check:checked"));
+    const errEl = document.getElementById("generate-error");
+    errEl.textContent = "";
+    if (checked.length === 0) { errEl.textContent = "Select at least one item first."; return; }
+    if (checked.length > 10) { errEl.textContent = "Max 10 items per batch — uncheck some."; return; }
+    if (!currentFileContent) { errEl.textContent = "Sync from GitHub first."; return; }
 
-    // Auto-fill required questions from the PAA data already fetched for this exact keyword
-    if (lastResearch && lastResearch.paaResults) {
-      const match = lastResearch.paaResults.find((r) => r.keyword === item.keyword);
-      if (match && match.questions.length) {
-        slot.querySelector(".b-questions").value = match.questions.map((q) => q.question).join("\n");
+    const selectedItems = checked.map((cb) => discoveryItemStore[parseInt(cb.getAttribute("data-index"), 10)]);
+
+    // Build new-page briefs, deduping by resolved slug (fixes the exact collision bug
+    // that happened before: multiple items resolving to the same target page).
+    const newPageBriefs = [];
+    const seenSlugs = new Set();
+    const faqAdditions = [];
+
+    selectedItems.forEach((item) => {
+      if (item.itemType === "new-page") {
+        const suggestedTitle = item.suggestedPage || item.keyword;
+        const slug = suggestedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        if (seenSlugs.has(slug)) {
+          // Same target page selected twice under different keywords — merge as an
+          // FAQ addition to the brief we're already creating, not a duplicate page.
+          return;
+        }
+        seenSlugs.add(slug);
+        const brief = {
+          slug, title: titleCase(suggestedTitle),
+          requiredKeywords: [item.keyword],
+          requiredQuestions: [],
+          related: []
+        };
+        if (currentSection === "calculators" || currentSection === "converters") {
+          brief.formula = item.matchedFormula || (currentSection === "calculators" ? CALC_FORMULAS[0] : CONVERTER_FORMULAS[0]);
+          brief.complexity = "standard";
+        }
+        if (lastResearch && lastResearch.paaResults) {
+          const match = lastResearch.paaResults.find((r) => r.keyword === item.keyword);
+          if (match && match.questions.length) brief.requiredQuestions = match.questions.map((q) => q.question);
+        }
+        newPageBriefs.push(brief);
+      } else if (item.itemType === "faq") {
+        const targetSlug = (item.suggestedPage || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        faqAdditions.push({ targetSlug, keyword: item.keyword, concept: item.concept || "" });
       }
+    });
+
+    const btn = document.getElementById("generate-selected-btn");
+    btn.disabled = true; btn.textContent = "Generating (this can take a minute)…";
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ section: currentSection, currentFileContent, newPageBriefs, faqAdditions })
+      });
+      if (res.status === 401) throw new Error("Unauthorized — session expired, reload and log in again.");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Generation failed");
+
+      updatedFileContent = data.updatedFileContent;
+      renderGenerateResults(data);
+      document.getElementById("generate-results-card").style.display = "block";
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Generate Selected";
     }
-    // titleHook and hook are left blank on purpose — /api/generate.js has Gemini draft
-    // these too when they're empty, checked by the same guardrails as everything else.
   }
+
+  function renderGenerateResults(data) {
+    const summaryEl = document.getElementById("accepted-summary");
+    let html = "";
+    if (data.acceptedPages.length) {
+      html += `<strong>${data.acceptedPages.length} new page(s):</strong><ul>` +
+        data.acceptedPages.map((p) => `<li><strong>${p.slug}</strong> — ${p.previewIntro || ""}${p.previewFaq ? `<div class="reason">FAQ preview: ${p.previewFaq.q}</div>` : ""}</li>`).join("") + "</ul>";
+    }
+    if (data.acceptedFaqs.length) {
+      html += `<strong>FAQ additions to existing pages:</strong><ul>` +
+        data.acceptedFaqs.map((f) => `<li><strong>${f.targetTitle}</strong> (${f.targetSlug}) — ${f.addedCount} question(s) added<ul>` +
+          f.addedFaqs.map((q) => `<li>${q.q}</li>`).join("") + `</ul></li>`).join("") + "</ul>";
+    }
+    if (!data.acceptedPages.length && !data.acceptedFaqs.length) html = "Nothing was accepted this round — see rejected/warnings below.";
+    summaryEl.innerHTML = html;
+    renderRejected(data.rejected);
+  }
+
 
   function titleCase(str) {
     return str.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
