@@ -128,7 +128,10 @@ const vercelConfig = {
   cleanUrls: true,
   trailingSlash: false,
   headers: [
-    { source: "/(.*)", headers: [{ key: "X-Content-Type-Options", value: "nosniff" }] }
+    { source: "/(.*)", headers: [{ key: "X-Content-Type-Options", value: "nosniff" }] },
+    { source: "/emmybund", headers: [
+      { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, max-age=0" }
+    ]}
   ]
 };
 fs.writeFileSync(path.join(__dirname, "vercel.json"), JSON.stringify(vercelConfig, null, 2) + "\n");
