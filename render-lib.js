@@ -127,6 +127,8 @@ function buildToolContentHTML(entry, allData, sectionPath, slugMap) {
         html += '<select id="f-' + f.id + '">';
         f.options.forEach(function (o) { html += '<option value="' + esc(o.value) + '">' + esc(o.label) + "</option>"; });
         html += "</select>";
+      } else if (f.type === "text") {
+        html += '<input type="text" id="f-' + f.id + '" placeholder="' + esc(f.placeholder || "") + '">';
       } else {
         html += '<input type="number" step="any" id="f-' + f.id + '" placeholder="' + esc(f.placeholder || "") + '">';
       }

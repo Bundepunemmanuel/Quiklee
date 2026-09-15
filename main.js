@@ -496,7 +496,7 @@
       var values = {};
       Array.prototype.slice.call(form.querySelectorAll("input, select")).forEach(function (el) {
         var id = el.id.replace(/^f-/, "");
-        values[id] = el.tagName === "SELECT" ? el.value : (parseFloat(el.value) || 0);
+        values[id] = el.tagName === "SELECT" || el.type === "text" ? el.value : (parseFloat(el.value) || 0);
       });
       var res = calculate(formula, values);
       $("#result-main").textContent = res.main;
