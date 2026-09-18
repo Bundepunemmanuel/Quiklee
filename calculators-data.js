@@ -187,6 +187,46 @@ const calculatorsData = [
       {
         "q": "How is BMI calculated?",
         "a": "BMI is your weight in kilograms divided by your height in metres, squared. In pounds and inches, it's (weight ÷ height²) × 703. See the step-by-step page linked below for a full worked example."
+      },
+      {
+        "q": "What do the different BMI score categories actually mean?",
+        "a": "BMI scores are split into four main categories: underweight (below 18.5), normal weight (18.5 to 24.9), overweight (25 to 29.9), and obese (30 and above). These ranges help screen for weight categories that may lead to health issues, though they do not directly measure body fat percentage."
+      },
+      {
+        "q": "How does my BMI help me figure out a calorie deficit for weight loss?",
+        "a": "Your BMI helps identify if you are carrying excess weight, which is the first step in deciding if a calorie deficit is appropriate. While BMI does not calculate your exact calorie burn, moving from an overweight or obese range toward a normal BMI generally requires consuming fewer calories than your body expends daily."
+      },
+      {
+        "q": "Does my daily calorie intake depend on my BMI?",
+        "a": "Daily caloric requirements are primarily determined by your total daily energy expenditure—which factors in your height, weight, age, and activity level—rather than your BMI alone. However, a higher BMI often correlates with a higher maintenance calorie requirement simply due to the energy needed to support a larger body mass."
+      },
+      {
+        "q": "What is considered a healthy weight according to BMI standards?",
+        "a": "A healthy weight is defined as a BMI score between 18.5 and 24.9. This range is statistically associated with the lowest risk of weight-related health conditions for most adults."
+      },
+      {
+        "q": "How many calories should I eat based on my BMI results?",
+        "a": "A BMI result alone cannot tell you how many calories to eat. To find your target intake, you must combine your height and weight data with your activity level to calculate your maintenance calories, then adjust down for weight loss or up for weight gain."
+      },
+      {
+        "q": "What is my ideal weight based on a normal BMI?",
+        "a": "An ideal weight range corresponds to a BMI between 18.5 and 24.9 for your specific height. Because height is the variable factor, you can use the calculator to find the exact weight span where your score falls into this normal category."
+      },
+      {
+        "q": "Can I use centimeters and kilograms in this calculator?",
+        "a": "Yes. You can switch the unit toggle on the calculator to enter your height in centimeters and your weight in kilograms for metric measurements."
+      },
+      {
+        "q": "How do Canadian health guidelines use BMI in relation to diabetes?",
+        "a": "Canadian clinical guidelines use BMI as a preliminary screening tool because a higher BMI, particularly in the overweight or obese ranges, is strongly correlated with an increased risk of developing type 2 diabetes."
+      },
+      {
+        "q": "Is this BMI calculator accurate to use during pregnancy?",
+        "a": "No. Standard BMI calculators are designed for non-pregnant adults and do not account for the rapid weight gain and physical changes that occur during pregnancy. Expecting individuals should consult a healthcare provider for appropriate weight tracking."
+      },
+      {
+        "q": "Can I enter my weight in pounds?",
+        "a": "Yes. Switch the calculator units to imperial to enter your height in feet and inches and your weight in pounds."
       }
     ],
     "related": [
