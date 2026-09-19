@@ -52,6 +52,7 @@
   .discover-group.new-formula { border-left:4px solid #C77D22; }
   .discover-group.existing-page { border-left:4px solid var(--primary); }
   .discover-group.faq-fold { border-left:4px solid var(--muted); }
+  .discover-group.app-intent { border-left:4px solid #8A9096; background:#F5F5F5; }
   .discover-item { padding:8px 0; border-bottom:1px solid var(--border); font-size:0.86rem; }
   .discover-item:last-child { border-bottom:none; }
   .discover-item .reason { color:var(--muted); font-size:0.8rem; }
@@ -75,6 +76,7 @@
   <div class="tabs">
     <div class="tab active" id="tab-research" onclick="switchTab('research')">Keyword Research</div>
     <div class="tab" id="tab-generate" onclick="switchTab('generate')">Generate Content</div>
+    <div class="tab" id="tab-history" onclick="switchTab('history')">History</div>
   </div>
 
   <div class="panel active" id="panel-research">
@@ -165,6 +167,17 @@
       <div id="rejected-list"></div>
     </div>
   </div>
+
+  <div class="panel" id="panel-history">
+    <div class="card">
+      <div class="toolbar">
+        <button onclick="loadHistory()" id="history-refresh-btn">Refresh History</button>
+      </div>
+      <p class="muted" style="font-size:0.85rem;">Logged to a separate "dashboard-history" branch — keeps Chunk's commit log clean. That branch needs to exist in your repo once, same as Chunk.</p>
+      <div class="error" id="history-error"></div>
+    </div>
+    <div class="card" id="history-list"></div>
+  </div>
 </div>
 
 <script>
@@ -193,8 +206,54 @@
   function switchTab(name) {
     document.getElementById("tab-research").classList.toggle("active", name === "research");
     document.getElementById("tab-generate").classList.toggle("active", name === "generate");
+    document.getElementById("tab-history").classList.toggle("active", name === "history");
     document.getElementById("panel-research").classList.toggle("active", name === "research");
     document.getElementById("panel-generate").classList.toggle("active", name === "generate");
+    document.getElementById("panel-history").classList.toggle("active", name === "history");
+    if (name === "history") loadHistory();
+  }
+
+  async function loadHistory() {
+    const errEl = document.getElementById("history-error");
+    const listEl = document.getElementById("history-list");
+    errEl.textContent = "";
+    listEl.innerHTML = '<p class="muted">Loading…</p>';
+    try {
+      const res = await fetch("/api/history", { headers: { "x-admin-key": adminKey } });
+      const data = await res.json();
+      if (!res.ok) throw new Error((data.error || "Failed to load history") + (data.hint ? " — " + data.hint : ""));
+      renderHistory(data.history || []);
+    } catch (e) {
+      errEl.textContent = e.message;
+      listEl.innerHTML = "";
+    }
+  }
+
+  function renderHistory(history) {
+    const listEl = document.getElementById("history-list");
+    if (history.length === 0) { listEl.innerHTML = '<p class="muted">No activity logged yet.</p>'; return; }
+    listEl.innerHTML = history.map((h) => {
+      const when = new Date(h.timestamp).toLocaleString();
+      let summary = "";
+      if (h.type === "research") summary = `Researched "${h.seed}" — ${h.longtailCount} long-tails, ${h.creditsUsed} Serper credits used`;
+      else if (h.type === "generate") summary = `Generated for ${h.section} — ${h.acceptedPagesCount} page(s), ${h.acceptedFaqsCount} FAQ addition(s), ${h.rejectedCount} rejected`;
+      else if (h.type === "push") summary = `Pushed to Chunk branch (${h.section})${h.commitSha ? " — " + h.commitSha.slice(0, 7) : ""}`;
+      else summary = JSON.stringify(h);
+      return `<div class="discover-item"><strong>${when}</strong><div class="reason">${summary}</div></div>`;
+    }).join("");
+  }
+
+  async function logHistory(entry) {
+    try {
+      await fetch("/api/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify({ entry })
+      });
+    } catch (e) {
+      // Non-critical — don't interrupt the user's actual workflow if logging fails
+      console.error("History logging failed:", e);
+    }
   }
 
   function unlock() {
@@ -451,6 +510,7 @@
 
       updatedFileContent = data.updatedFileContent;
       renderGenerateResults(data);
+      logHistory({ type: "generate", section: currentSection, acceptedPagesCount: (data.acceptedPages || []).length, acceptedFaqsCount: (data.acceptedFaqs || []).length, rejectedCount: (data.rejected || []).length });
       document.getElementById("generate-results-card").style.display = "block";
     } catch (e) {
       errEl.textContent = e.message;
@@ -504,6 +564,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Push failed");
       statusEl.textContent = "✓ Pushed to Chunk branch. Open a pull request on GitHub when ready.";
+      logHistory({ type: "push", section: currentSection, commitSha: data.commitSha || "" });
     } catch (e) {
       statusEl.textContent = "✗ " + e.message;
     } finally {
@@ -540,6 +601,7 @@
       if (!researchRes.ok) throw new Error(research.error || "Auto-research failed");
       (research.log || []).forEach((line) => appendLog("→ " + line));
       lastResearch = research;
+      logHistory({ type: "research", seed, longtailCount: (research.longtailKeywords || []).length, creditsUsed: research.creditsUsed || 0 });
 
       const formulasForSection = currentSection === "calculators" ? CALC_FORMULAS
         : currentSection === "converters" ? CONVERTER_FORMULAS
@@ -574,6 +636,14 @@
     const container = document.getElementById("discover-results");
     container.innerHTML = "";
     discoveryItemStore = [];
+
+    if (research && research.appIntentKeywords && research.appIntentKeywords.length) {
+      const appIntentDiv = document.createElement("div");
+      appIntentDiv.className = "discover-group app-intent";
+      appIntentDiv.innerHTML = `<h4>📱 App-intent (shown for awareness — excluded from content targets, can't realistically capture this click) (${research.appIntentKeywords.length})</h4>
+        <p class="muted" style="font-size:0.85rem;">${research.appIntentKeywords.join(", ")}</p>`;
+      container.appendChild(appIntentDiv);
+    }
 
     // "type" here drives how each checked item gets used when "Generate Selected" runs:
     // new-page items become newPageBriefs, faq-type items become faqAdditions grouped by target.
@@ -698,6 +768,7 @@
 
       updatedFileContent = data.updatedFileContent;
       renderGenerateResults(data);
+      logHistory({ type: "generate", section: currentSection, acceptedPagesCount: (data.acceptedPages || []).length, acceptedFaqsCount: (data.acceptedFaqs || []).length, rejectedCount: (data.rejected || []).length });
       document.getElementById("generate-results-card").style.display = "block";
     } catch (e) {
       errEl.textContent = e.message;
