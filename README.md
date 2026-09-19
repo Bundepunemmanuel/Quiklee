@@ -1,7 +1,7 @@
 # Quiklee
 
 Calculators, converters, meanings, and alternatives — one real, static HTML file per search
-query, built for Vercel. All 4 sections use folder-based clean URLs.
+query, built for Vercel. All 4 sections use folder-based clean URLs
 
 ## Live structure (repo root)
 
